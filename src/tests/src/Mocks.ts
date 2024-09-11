@@ -10,16 +10,15 @@ import {
 } from "../../Chore/Types";
 import { ContactStatusData } from "chat-api";
 import { FindBy } from "@testing-library/react";
-import { parse } from "flatted";
+import { parse, fromJSON } from "flatted";
+import rawViews from "../fakeViews.json";
 
 export type FViews = { user: UserUI; settings?: SettingsUI; chats: ChatUI[] }[];
 
 export const fakeViews = getFakeViews();
 
 function getFakeViews(): FViews {
-	const fakeViews: FViews = parse(
-		fs.readFileSync("tests/FakeViews.json").toString()
-	);
+	const fakeViews: FViews = fromJSON(rawViews);
 	fakeViews.forEach((fv) =>
 		fv.chats.forEach((chat) => {
 			chat.messages.forEach((message) => {
