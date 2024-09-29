@@ -1,4 +1,4 @@
-export function setNativeValue(element: HTMLInputElement, value: string) {
+export function setNativeValue(element: HTMLInputElement | HTMLTextAreaElement, value: string) {
     const valueSetter = Object.getOwnPropertyDescriptor(element, "value")!.set;
     const prototype = Object.getPrototypeOf(element);
     const prototypeValueSetter = Object.getOwnPropertyDescriptor(

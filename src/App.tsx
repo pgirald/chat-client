@@ -2,6 +2,8 @@ import { createContext, useEffect, useState } from "react";
 import "./App.css";
 import { E } from "./utils/General";
 import { User } from "chat-api";
+import { ChatSection } from "./components/ChatSection";
+import { globalContext } from "./tests/src/Context";
 
 function App() {
 	// const [username, setUsername] = useState("");
@@ -23,9 +25,11 @@ function App() {
 	// );
 	useEffect(() => {}, []);
 	return (
-		<div className="w-full h-full justify-center items-center font-bold text-[40px]">
-			Hello
-		</div>
+		<globalContext.ContextNode>
+			<ChatSection className="w-full h-full" userConnected={true}>
+				{globalContext.chats}
+			</ChatSection>
+		</globalContext.ContextNode>
 	);
 }
 

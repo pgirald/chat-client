@@ -2,7 +2,8 @@ import { createContext, ReactNode, useContext, useState } from "react";
 
 export const LoadingContext = createContext<
 	[(loading: boolean) => void, boolean]
->([(_: boolean) => {}, false]);
+>([(_: boolean) =>
+	 {}, false]);
 
 export function LoadingModal({
 	visible,

@@ -1,14 +1,15 @@
 export {};
 import { useEffect, useReducer, useRef, useState } from "react";
 import socket from "../socket";
-import { ChatSection } from "./ChatSection";
+import { ChatMessageData, ChatSection } from "./ChatSection";
 import { Indexed, Optional } from "../utils/Types";
-import { ContactStatusData } from "chat-api";
+import { AttachmentData, ContactStatusData } from "chat-api";
 import { Client, Source } from "../Chore/Source";
 import { range } from "../utils";
 import "../utils/Extensions";
 import { useLoading } from "./LoadingModal";
 import { ChatUI, MessageUI, UserUI } from "../Chore/Types";
+import { MessageData } from "./Chat";
 
 type _User = {
 	userID: string;
@@ -26,8 +27,8 @@ type ChatsActions = "Add" | "Update";
 type ActionData<T> = T extends "Add"
 	? Indexed<ChatUI>
 	: T extends "Update"
-	? Indexed<Optional<ChatUI>>
-	: unknown;
+		? Indexed<Optional<ChatUI>>
+		: unknown;
 
 function chatsReducer(
 	state: readonly ChatUI[],
@@ -94,20 +95,15 @@ export function ChatPage(props: ChatPageProps) {
 		<ChatSection
 			userConnected={isConnected}
 			onMessage={onMessage}
-			user={props.user}
 			className="h-full w-full"
 		>
 			{chatsSt}
 		</ChatSection>
 	);
 
-	async function onMessage(e: {
-		selectedChat: ChatUI;
-		content: string;
-		idx: number;
-	}) {
+	async function onMessage(e: ChatMessageData) {
 		const message = await props.source.sendMessage(
-			e.content,
+			e.msg.content,
 			[],
 			e.selectedChat
 		);

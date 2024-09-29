@@ -1,3 +1,6 @@
-export const appDefault = {
-    height: 44,
+import { CSSProperties } from "react";
+
+export const removeScrollBars: CSSProperties = {
+	scrollbarWidth: "none",
+	msOverflowStyle: "none",
 };

@@ -7,6 +7,7 @@ export type Theme = {
 	bg: string;
 	content: string;
 	separator: string;
+	emojistTheme: "dark" | "light";
 };
 
 export const light: Theme = {
@@ -16,6 +17,7 @@ export const light: Theme = {
 	bg: "#FFFFFF",
 	content: "#000000",
 	separator: "#7E7E7E",
+	emojistTheme: "light",
 };
 
 export const dark: Theme = {
@@ -25,6 +27,7 @@ export const dark: Theme = {
 	bg: "#000000",
 	content: "#FFFFFF",
 	separator: "#5A5A5A",
+	emojistTheme: "dark",
 };
 
 export const fixedTheme = {
@@ -34,6 +37,22 @@ export const fixedTheme = {
 	green: "#55FF52",
 	red: "#BA0000",
 	elementGray: "#D9D9D9",
+	borderGray: "#3E3E3E",
+	selectedItem: "#5392BB",
+	mute: "#EA6E44",
 };
+
+export function useTheme(tailwind: boolean) {}
+
+function checkColor(color: string) {
+	if (!/#[A-Fa-f0-9]{6}/.test(color)) {
+		throw Error(`The color's (${color}) format is invalid`);
+	}
+}
+
+export function tw(color: string, t: string) {
+	checkColor(color);
+	return `${t}-[${color}]`;
+}
 
 export const themeContext = createContext(light);

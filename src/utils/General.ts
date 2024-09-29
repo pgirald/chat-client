@@ -120,3 +120,20 @@ export function EventHandler<T extends Function>() {
 		},
 	};
 }
+
+export function truncateStr(str: string, charCount: number = 60) {
+	if (charCount >= str.length) {
+		return str;
+	}
+	return `${str.slice(0, charCount)}...`;
+}
+
+export function empty(value: any) {
+	return value === null || value === undefined;
+}
+
+const extensionRe = /(?:\.([^.]+))?$/;
+
+export function getFileExtension(fileName: string) {
+	return extensionRe.exec(fileName)?.[1];
+}

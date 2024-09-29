@@ -13,7 +13,12 @@ import { FindBy } from "@testing-library/react";
 import { parse, fromJSON } from "flatted";
 import rawViews from "../fakeViews.json";
 
-export type FViews = { user: UserUI; settings?: SettingsUI; chats: ChatUI[] }[];
+export type FViews = {
+	user: UserUI;
+	settings?: SettingsUI;
+	chats: ChatUI[];
+	allChats: ChatUI[];
+}[];
 
 export const fakeViews = getFakeViews();
 

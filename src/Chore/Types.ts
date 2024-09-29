@@ -15,7 +15,11 @@ export type MessageUI = _Message & { status: MessageStatus };
 
 type _ChatUI = Replace<_Chat, "subs", ContactUI[]>;
 
-export type ChatUI = Replace<_ChatUI, "messages", MessageUI[]>;
+export type ChatUI = Replace<
+	Replace<_ChatUI, "messages", MessageUI[]>,
+	"owner",
+	ContactUI
+>;
 
 export {
 	type Role as RoleUI,
