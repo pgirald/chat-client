@@ -5,11 +5,16 @@ module.exports = {
   ],
   theme: {
     extend: {
-      fontSize: {
-        "xs": "8px",
-        "sm": "12px",
-        "2xl": "1.563rem"
+      fontFamily: {
+        "Roboto": "Roboto",
+        "Krona": "Krona"
       },
+      fontSize: {
+        "xs": "12px",
+        "sm": "17px",
+        "1xl": "30px",
+        "2xl": "38px",
+      }
     },
   },
   plugins: [require('tailwindcss-unimportant')],

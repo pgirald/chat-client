@@ -4,6 +4,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { io } from "socket.io-client";
 import "./index.css";
+import { globalContext } from "./tests/src/Context";
 const socket = io("http://localhost:3000", { autoConnect: false });
 
 const root = ReactDOM.createRoot(
@@ -11,7 +12,9 @@ const root = ReactDOM.createRoot(
 );
 root.render(
 	<React.StrictMode>
-		<App />
+		<globalContext.ContextNode>
+			<App />
+		</globalContext.ContextNode>
 	</React.StrictMode>
 );
 

@@ -8,7 +8,6 @@ import {
 } from "react";
 import { E } from "../General";
 import { preProcessFile } from "typescript";
-import { removeScrollBars } from "./DefaultStyles";
 
 export type MutilineInputProps = {
 	value?: string;
@@ -17,6 +16,7 @@ export type MutilineInputProps = {
 	onBlur?: (e: FocusEvent<HTMLTextAreaElement, Element>) => void;
 	className?: string;
 	style?: CSSProperties;
+	readonly?: boolean;
 };
 
 export const MultilineInput = forwardRef(
@@ -31,12 +31,12 @@ export const MultilineInput = forwardRef(
 					...props.style,
 					resize: "none",
 					whiteSpace: "pre-wrap",
-					...removeScrollBars,
 				}}
 				onChange={(e) => {
 					props.onChange?.(e.target.value);
 				}}
 				onBlur={props.onBlur}
+				readOnly={props.readonly}
 			/>
 		);
 	}

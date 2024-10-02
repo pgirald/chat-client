@@ -5,8 +5,6 @@ import { ChatUI } from "../Chore/Types";
 import { fixedTheme, themeContext, useTheme } from "../global/Theme";
 import { BiSolidPlusCircle } from "react-icons/bi";
 import { IoSearchSharp } from "react-icons/io5";
-import { E } from "../utils";
-import { removeScrollBars } from "../utils/components/DefaultStyles";
 import { WindowHeader, Label } from "./Styling";
 import { languageContext } from "../global/Language";
 import { chatImg, chatLabel } from "./utils";
@@ -16,6 +14,7 @@ import { ChatsList } from "./ChatsList";
 import { Modal, ModalHandler } from "./Modal";
 import { ChatForm } from "./ChatForm";
 import { SearchTool } from "./SearchTool";
+import { EditableImg } from "./EditableImg";
 
 export type ChatMessageData = {
 	msg: MessageData;
@@ -28,6 +27,7 @@ export type ChatSectionProps = {
 	userListClass?: string;
 	userConnected: boolean;
 	className?: string;
+	style?: CSSProperties;
 	onMessage?: (e: ChatMessageData) => void;
 	onChatSelected?: (chat: ChatUI, idx: number) => void;
 };
@@ -44,36 +44,35 @@ export function ChatSection(props: ChatSectionProps) {
 	const user = useContext(userContext);
 	const language = useContext(languageContext);
 	const chatModalRef = useRef<ModalHandler>(null);
+	const newChatModalRef = useRef<ModalHandler>(null);
 	const theme = useContext(themeContext);
-	const toolsHeight = 35;
+	const toolsHeight = 40;
+	const iconsSize = 20;
 
 	return (
-		<div className={props.className}>
+		<div className={props.className} style={props.style}>
 			<div className="flex-row h-full w-full">
-				<div className="w-1/5 h-full">
-					<div className="items-start justify-center w-full h-1/6">
+				<div className="w-[30%] h-full">
+					<div className="items-start justify-center w-full h-1/5">
 						<WindowHeader content={language.messages} />
 					</div>
 					<div className="flex-row space-x-2 h-fit w-full">
-						<SearchTool style={{ height: toolsHeight }} />
+						<SearchTool
+							style={{ height: toolsHeight }}
+							showLen
+							lenSize={iconsSize}
+						/>
 						<BiSolidPlusCircle
 							className="self-center cursor-pointer mr-2"
 							color={theme.breaker}
 							size={toolsHeight}
 							onClick={() => {
-								setSelectedChat({
-									id: -1,
-									messages: [],
-									owner: user,
-									subs: [user],
-								});
-								chatModalRef.current?.openModal();
+								newChatModalRef.current?.openModal();
 							}}
 						/>
 					</div>
 					<ChatsList
 						className="space-y-2 overflow-y-scroll h-5/6 w-full"
-						style={removeScrollBars}
 						onChatSelected={(chat, idx) => {
 							setSelectedChat(chat);
 							selectedIdxRef.current = idx;
@@ -84,19 +83,23 @@ export function ChatSection(props: ChatSectionProps) {
 						{props.children}
 					</ChatsList>
 				</div>
-				<div className="h-full w-4/5">
+				<div className="h-full w-[70%]">
 					{selectedChat && (
 						<>
-							<div className="w-full flex-row justify-start items-center space-x-5 h-1/6">
-								<img src={chatImg(selectedChat, user)} height={45} width={45} />
+							<div
+								className="w-full flex-row justify-start items-center space-x-2 h-1/5"
+								style={{ color: theme.content, backgroundColor: theme.bg }}
+							>
+								<EditableImg src={chatImg(selectedChat, user)} size={70} />
 								<Label content={chatLabel(selectedChat, user, language)} />
 								<div className="flex-row w-full h-fit justify-end">
-									<IoSearchSharp className="cursor-pointer" />
+									<IoSearchSharp className="cursor-pointer" size={iconsSize} />
 									<HiOutlineDotsVertical
 										className="cursor-pointer"
 										onClick={() => {
 											chatModalRef.current?.openModal();
 										}}
+										size={iconsSize}
 									/>
 								</div>
 							</div>
@@ -115,20 +118,19 @@ export function ChatSection(props: ChatSectionProps) {
 					)}
 				</div>
 			</div>
+			<Modal ref={newChatModalRef}>
+				<ChatForm
+					chat={{
+						id: -1,
+						messages: [],
+						owner: user,
+						subs: [user],
+					}}
+				/>
+			</Modal>
 			{selectedChat && (
 				<Modal ref={chatModalRef}>
 					<ChatForm chat={selectedChat} />
-					{/* <WindowTemplate header={chatLabel(selectedChat, user, language)}>
-						<Header content={language.members} />
-						<UsersList
-							className="max-h-42"
-							onUserSelected={(user) => {
-								alert(user.username);
-							}}
-						>
-							{selectedChat.subs}
-						</UsersList>
-					</WindowTemplate> */}
 				</Modal>
 			)}
 		</div>

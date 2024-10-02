@@ -44,15 +44,6 @@ export const fixedTheme = {
 
 export function useTheme(tailwind: boolean) {}
 
-function checkColor(color: string) {
-	if (!/#[A-Fa-f0-9]{6}/.test(color)) {
-		throw Error(`The color's (${color}) format is invalid`);
-	}
-}
+export type ThemeContext = Theme & { set?: (value: Theme) => void };
 
-export function tw(color: string, t: string) {
-	checkColor(color);
-	return `${t}-[${color}]`;
-}
-
-export const themeContext = createContext(light);
+export const themeContext = createContext<ThemeContext>(light);

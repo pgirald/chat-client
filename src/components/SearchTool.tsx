@@ -9,7 +9,8 @@ export type SearchToolProps = {
 	onSearchChange?: (value: string) => void;
 	className?: string;
 	style?: CSSProperties;
-	search?: boolean;
+	showLen?: boolean;
+	lenSize?: number | string;
 	value?: string;
 };
 
@@ -32,23 +33,23 @@ export function SearchTool(props: SearchToolProps) {
 						borderColor: fixedTheme.borderGray,
 					}}
 				>
-					{props.search && (
+					{props.showLen && (
 						<IoSearchSharp
 							onClick={() => {
 								props.onSearchRequested?.(inputRef.current?.value || "");
 							}}
-							className="cursor-pointer mx-1"
+							className="cursor-pointer mx-1 aspect-square h-full"
 							color={theme.content}
-							size={20}
+							size={props.lenSize}
 						/>
 					)}
 					<input
+						className="text-sm"
 						ref={inputRef}
 						style={{
 							all: "unset",
 							width: "100%",
 							fontFamily: "Roboto",
-							fontSize: 12,
 						}}
 						onChange={(e) => {
 							props.onSearchChange?.(e.target.value);

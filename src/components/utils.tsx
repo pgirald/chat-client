@@ -73,10 +73,10 @@ export function CloseFrame(props: CloseFrameProps) {
 			style={props.style}
 		>
 			<IoMdCloseCircle
-				className="cursor-pointer"
+				className="cursor-pointer absolute"
 				onClick={props.onCloseRequested}
 				color={fixedTheme.red}
-				size={props.iconSize || 20}
+				size={props.iconSize || 25}
 			/>
 			<div className={props.wrapperClassName} style={{ ...props.wrapperStyle }}>
 				{props.children}

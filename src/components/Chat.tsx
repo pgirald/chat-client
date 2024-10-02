@@ -37,7 +37,7 @@ export const Chat = forwardRef(
 				/>
 				<div className="h-1/5 w-full items-center justify-center">
 					<MessageInput
-						className="w-1/2"
+						className="w-2/3 h-2/3"
 						ref={inputRef}
 						onSendMessage={(content) =>
 							onMessage?.({ content, attachments: [] })

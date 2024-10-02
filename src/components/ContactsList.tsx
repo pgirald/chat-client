@@ -9,13 +9,13 @@ import { ContactUI, UserUI } from "../Chore/Types";
 import { E, isEmpty as notSpecified, truncateStr } from "../utils";
 import { ProfileItem } from "./ProfileItem";
 import { fixedTheme } from "../global/Theme";
-import { removeScrollBars } from "../utils/components/DefaultStyles";
 import profileImage from "../assets/profile.png";
 import { userContext } from "../global/User";
 import { Modal, ModalHandler } from "./Modal";
 import { ContactForm } from "./ContactForm";
 import { IoMdRemoveCircle } from "react-icons/io";
 import { SearchTool } from "./SearchTool";
+import { languageContext } from "../global/Language";
 
 export type ContactsListProps = {
 	children: ContactUI[];
@@ -34,7 +34,7 @@ export function ContactsList(props: ContactsListProps) {
 	return (
 		<div
 			className={`${E(props.className)} -:overflow-y-scroll -:p-0 -:m-0 -:space-y-1`}
-			style={{ ...removeScrollBars, ...props.style }}
+			style={props.style}
 		>
 			{props.children.map((contact, idx) => (
 				<div className="flex-row space-x-2 items-center">
@@ -65,11 +65,15 @@ export type ContactItemProps = {
 };
 
 export function ContactItem({ contact, user, onClick }: ContactItemProps) {
+	const language = useContext(languageContext);
+
 	return (
 		<ProfileItem
 			key={contact.id}
 			name={
-				user.id === contact.id ? `${contact.username} (you)` : contact.username
+				user.id === contact.id
+					? `${contact.username} (${language.you})`
+					: contact.username
 			}
 			img={contact.img || profileImage}
 			description={truncateStr(contact.aboutMe || "")}

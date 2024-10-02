@@ -10,8 +10,7 @@ import { userContext } from "../global/User";
 import { StyleSheet } from "../utils/Types";
 import { MessageUI } from "../Chore/Types";
 import { languageContext } from "../global/Language";
-import { fixedTheme, themeContext, tw } from "../global/Theme";
-import { removeScrollBars } from "../utils/components/DefaultStyles";
+import { fixedTheme, themeContext } from "../global/Theme";
 import { IoIosArrowDown } from "react-icons/io";
 import { AttachmentsDisplay } from "./AttachmentsDisplay";
 import { getFileExtension } from "../utils";
@@ -62,11 +61,7 @@ export function MessagePanel(props: MessagePanelProps) {
 			}}
 		>
 			<div
-				style={{
-					...styles.messagePanel,
-					height: "100%",
-					width: "100%",
-				}}
+			className="overflow-y-scroll w-full h-full px-16"
 				ref={panelRef}
 				onScroll={(e) => {
 					if (scrolledToBottom(e.currentTarget)) {
@@ -170,8 +165,9 @@ export function MessageItem(props: MessageItemProps) {
 					}}
 				/>
 				<div
-					className="space-y-2"
-					style={{ ...styles.messageItem, backgroundColor: msgColor }}
+					//marginBottom: 10,
+					className="space-y-2 text-sm max-w-96 font-Roboto text-white w-fit h-fit py-1"
+					style={{ backgroundColor: msgColor }}
 				>
 					<span>{props.message.content}</span>
 					{props.message.attachments.length > 0 && (
@@ -184,8 +180,8 @@ export function MessageItem(props: MessageItemProps) {
 						/>
 					)}
 					<div
-						className="self-end rounded-full px-2"
-						style={{ backgroundColor: theme.breaker, fontSize: 10 }}
+						className="self-end rounded-full px-2 text-xs"
+						style={{ backgroundColor: theme.breaker }}
 					>
 						{props.isFromUser ? "yourself" : props.message.sender.username}
 					</div>
@@ -203,20 +199,6 @@ export function MessageItem(props: MessageItemProps) {
 }
 
 const styles: StyleSheet = {
-	messagePanel: {
-		overflowY: "scroll",
-		...removeScrollBars,
-	},
-	messageItem: {
-		fontSize: 12,
-		fontFamily: "Roboto",
-		color: fixedTheme.white,
-		width: "fit-content",
-		height: "fit-content",
-		maxWidth: 245,
-		padding: "5px 0px 5px 0px",
-		//marginBottom: 10,
-	},
 	resendBtn: {
 		font: "Roboto",
 		backgroundColor: fixedTheme.red,

@@ -4,6 +4,7 @@ import {
 	forwardRef,
 	ReactNode,
 	useContext,
+	useEffect,
 	useImperativeHandle,
 	useState,
 } from "react";
@@ -28,6 +29,10 @@ export const Modal = forwardRef(
 		const [show, setShow] = useState(false);
 		const theme = useContext(themeContext);
 
+		useEffect(() => {
+			ReactModal.setAppElement("body");
+		}, []);
+
 		useImperativeHandle(ref, () => ({ openModal, closeModal }));
 
 		const modalStyle: ReactModal.Styles = {
@@ -40,6 +45,7 @@ export const Modal = forwardRef(
 				backgroundColor: theme.bg,
 				margin: 0,
 				padding: 0,
+				maxHeight:"100%",
 				...props.reactModalProps?.style?.content,
 			},
 		};

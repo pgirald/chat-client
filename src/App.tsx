@@ -1,9 +1,13 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import "./App.css";
 import { E } from "./utils/General";
 import { User } from "chat-api";
 import { ChatSection } from "./components/ChatSection";
 import { globalContext } from "./tests/src/Context";
+import { Layout } from "./components/Layout";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { BsPersonFill } from "react-icons/bs";
+import { themeContext } from "./global/Theme";
 
 function App() {
 	// const [username, setUsername] = useState("");
@@ -24,12 +28,18 @@ function App() {
 	// 	</div>
 	// );
 	useEffect(() => {}, []);
+	const theme = useContext(themeContext);
+
 	return (
-		<globalContext.ContextNode>
-			<ChatSection className="w-full h-full" userConnected={true}>
-				{globalContext.chats}
-			</ChatSection>
-		</globalContext.ContextNode>
+			<Layout>
+				<ChatSection
+					className="w-full h-full"
+					style={{ backgroundColor: theme.bg }}
+					userConnected={true}
+				>
+					{globalContext.chats}
+				</ChatSection>
+			</Layout>
 	);
 }
 

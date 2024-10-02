@@ -40,7 +40,7 @@ export const MessageInput = forwardRef(
 		const inputRef = useRef<HTMLTextAreaElement>(null);
 		const theme = useContext(themeContext);
 
-		const iconsSize = 22;
+		const iconsSize = 30;
 
 		useImperativeHandle(ref, () => inputRef.current as HTMLTextAreaElement);
 
@@ -49,7 +49,7 @@ export const MessageInput = forwardRef(
 				className={`-:h-11 -:flex-row -:w-full -:self-center ${E(props.className)}`}
 				style={props.style}
 			>
-				<div className="h-full w-full flex-row border border-black rounded-md">
+				<div className="h-full w-full flex-row border border-black rounded-md bg-white ">
 					<MultilineInput
 						ref={inputRef}
 						defaultValue={props.defaultValue}
