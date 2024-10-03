@@ -56,16 +56,18 @@ export function Layout(props: LayoutProps) {
 				<BsPersonCircle size={30} className="pr-2" />
 				{language.profile}
 			</DropdownMenu.Item>
-			<DropdownMenu.Item
-				className={menuItemClass}
-				key="1"
-				onClick={() => {
-					privilegesModalRef.current?.openModal();
-				}}
-			>
-				<BsFillKeyFill size={30} className="pr-2" />
-				{language.admon}
-			</DropdownMenu.Item>
+			{user.role && (
+				<DropdownMenu.Item
+					className={menuItemClass}
+					key="1"
+					onClick={() => {
+						privilegesModalRef.current?.openModal();
+					}}
+				>
+					<BsFillKeyFill size={30} className="pr-2" />
+					{language.admon}
+				</DropdownMenu.Item>
+			)}
 			<DropdownMenu.Item className={menuItemClass} key="2">
 				<BsBoxArrowLeft size={30} className="pr-2" />
 				{language.logOut}
@@ -151,7 +153,7 @@ export function Layout(props: LayoutProps) {
 						<Option label={language.chats} icon={<BsChatDotsFill />} />
 						<DropdownMenu.Root>
 							<DropdownMenu.Trigger className="outline-none">
-								<UserOps />
+								<UserOps src={user.img} />
 							</DropdownMenu.Trigger>
 							{userOps}
 						</DropdownMenu.Root>
@@ -207,7 +209,7 @@ function Option(props: OptionProps) {
 	);
 }
 
-type UserOpsProps = { onClick?: () => void };
+type UserOpsProps = { onClick?: () => void; src?: string };
 
 function UserOps(props: UserOpsProps) {
 	const imgSize = 30;
@@ -224,7 +226,7 @@ function UserOps(props: UserOpsProps) {
 			>
 				<RxTriangleDown color="white" size={25} />
 			</div>
-			<EditableImg src={profileImg} size={imgSize} />
+			<EditableImg src={props.src || profileImg} size={imgSize} />
 		</div>
 	);
 }

@@ -26,21 +26,21 @@ export function Context(theme: Theme, language: Language, userIdx: number) {
 
 		const [_language, setLanguage] = useState<LanguageContext>(language);
 
-		function _setTheme(value: Theme) {
+		const _setTheme = (value: Theme) => {
 			if (value !== light && value !== dark) {
 				throw Error("And invalid value of theme was specified");
 			}
 			Object.setPrototypeOf(value, { set: _setTheme });
 			setTheme(value);
-		}
+		};
 
-		function _setLanguage(value: Language) {
+		const _setLanguage = (value: Language) => {
 			if (value !== spanish && value !== english) {
 				throw Error("And invalid value of theme was specified");
 			}
 			Object.setPrototypeOf(value, { set: _setLanguage });
 			setLanguage(value);
-		}
+		};
 
 		Object.setPrototypeOf(_theme, { set: _setTheme });
 		Object.setPrototypeOf(_language, { set: _setLanguage });

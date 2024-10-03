@@ -13,7 +13,7 @@ export type MessageData = {
 };
 
 export type ChatProps = {
-	chat: ChatUI;
+	chat?: ChatUI;
 	onMessage?: (content: MessageData) => void;
 	className?: string;
 };
@@ -33,33 +33,37 @@ export const Chat = forwardRef(
 				<MessagePanel
 					className="h-4/5 border w-full rounded-l-lg"
 					style={{ borderColor: theme.separator }}
-					messages={chat.messages}
+					messages={chat?.messages || []}
 				/>
 				<div className="h-1/5 w-full items-center justify-center">
-					<MessageInput
-						className="w-2/3 h-2/3"
-						ref={inputRef}
-						onSendMessage={(content) =>
-							onMessage?.({ content, attachments: [] })
-						}
-						onFilesSelected={(files) => {
-							setFiles(files);
-							modalRef.current?.openModal();
-						}}
-					/>
+					{chat && (
+						<MessageInput
+							className="w-2/3 h-2/3"
+							ref={inputRef}
+							onSendMessage={(content) =>
+								onMessage?.({ content, attachments: [] })
+							}
+							onFilesSelected={(files) => {
+								setFiles(files);
+								modalRef.current?.openModal();
+							}}
+						/>
+					)}
 				</div>
-				<AttachmentsModal
-					ref={modalRef}
-					defaultValue={inputRef.current?.value}
-					onAccept={(msgData) => {
-						if (inputRef.current) {
-							inputRef.current.value = "";
-						}
-						onMessage?.(msgData);
-						modalRef.current?.closeModal();
-					}}
-					files={files}
-				/>
+				{chat && (
+					<AttachmentsModal
+						ref={modalRef}
+						defaultValue={inputRef.current?.value}
+						onAccept={(msgData) => {
+							if (inputRef.current) {
+								inputRef.current.value = "";
+							}
+							onMessage?.(msgData);
+							modalRef.current?.closeModal();
+						}}
+						files={files}
+					/>
+				)}
 			</div>
 		);
 	}

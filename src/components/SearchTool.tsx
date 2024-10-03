@@ -50,6 +50,7 @@ export function SearchTool(props: SearchToolProps) {
 							all: "unset",
 							width: "100%",
 							fontFamily: "Roboto",
+							color: theme.content,
 						}}
 						onChange={(e) => {
 							props.onSearchChange?.(e.target.value);

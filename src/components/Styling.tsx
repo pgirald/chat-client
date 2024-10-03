@@ -63,7 +63,7 @@ export function WindowTemplate(props: WindowTemplateProps) {
 	const identation = empty(props.identation) ? fringeLenght : props.identation;
 
 	return (
-		<div className={`-:pr-5 -:py-5 ${props.className}`}>
+		<div className={`-:pr-5 -:pb-5 ${props.className}`}>
 			<WindowHeader
 				className="mb-3"
 				content={props.header}

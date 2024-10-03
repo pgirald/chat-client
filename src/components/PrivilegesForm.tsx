@@ -1,13 +1,16 @@
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 import { Info, WindowTemplate } from "./Styling";
 import { languageContext } from "../global/Language";
 import { AppButton } from "./AppButton";
 import { fixedTheme } from "../global/Theme";
 import { userContext } from "../global/User";
+import { Modal, ModalHandler } from "./Modal";
 
 export function PrivilegesForm() {
 	const language = useContext(languageContext);
 	const user = useContext(userContext);
+
+	const roleModalRef = useRef<ModalHandler>(null);
 
 	return (
 		<WindowTemplate header={language.privileges} wrapperClassName="space-y-5">
@@ -33,6 +36,16 @@ export function PrivilegesForm() {
 					content={language.broadcast}
 				/>
 			)}
+			{user.role?.userPrivileges && (
+				<AppButton
+					style={{ backgroundColor: fixedTheme.logoBlue }}
+					onClick={()=>{roleModalRef.current?.openModal()}}
+					content={language.manageRoles}
+				/>
+			)}
+			<Modal ref={roleModalRef}>
+				<PrivilegesForm />
+			</Modal>
 		</WindowTemplate>
 	);
 }

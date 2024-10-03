@@ -25,13 +25,14 @@ export type ProfileItemProps = {
 	className?: string;
 	style?: CSSProperties;
 	font?: FontProps;
+	height?: number;
 };
 
 export function ProfileItem(
 	props: ProfileItemProps
 ): ReactElement<ProfileItemProps> {
 	const theme = useContext(themeContext);
-	const imgSize = 60;
+	const imgSize = props.height || 60;
 
 	return (
 		<div

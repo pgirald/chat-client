@@ -83,6 +83,7 @@ export function ContactForm(props: ContactFormProps) {
 								}}
 								value={contact.firstName}
 								active={isCurrentUser}
+								showEdit={isCurrentUser}
 							/>
 						}
 					/>
@@ -96,6 +97,7 @@ export function ContactForm(props: ContactFormProps) {
 								}}
 								value={contact.lastName}
 								active={isCurrentUser}
+								showEdit={isCurrentUser}
 							/>
 						}
 					/>
@@ -109,6 +111,7 @@ export function ContactForm(props: ContactFormProps) {
 								}}
 								value={contact.username}
 								active={isCurrentUser}
+								showEdit={isCurrentUser}
 							/>
 						}
 					/>
@@ -122,6 +125,7 @@ export function ContactForm(props: ContactFormProps) {
 								}}
 								value={contact.email}
 								active={isCurrentUser}
+								showEdit={isCurrentUser}
 							/>
 						}
 					/>
@@ -136,6 +140,7 @@ export function ContactForm(props: ContactFormProps) {
 								value={contact.phoneNumber}
 								placeholder={contact.phoneNumber || language.notSpecified}
 								active={isCurrentUser}
+								showEdit={isCurrentUser}
 							/>
 						}
 					/>

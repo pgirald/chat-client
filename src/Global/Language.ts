@@ -55,6 +55,7 @@ export type Language = {
 	logOut: string;
 	english: string;
 	spanish: string;
+	manageRoles: string;
 };
 
 export const spanish: Language = {
@@ -114,6 +115,7 @@ export const spanish: Language = {
 	logOut: "Salir",
 	english: "Inglés",
 	spanish: "Español",
+	manageRoles: "Administrar roles",
 };
 
 export const english: Language = {
@@ -173,6 +175,7 @@ export const english: Language = {
 	logOut: "Log out",
 	english: "English",
 	spanish: "Spanish",
+	manageRoles: "Manage roles",
 };
 
 export type LanguageContext = Language & { set?: (value: Language) => void };

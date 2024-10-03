@@ -153,3 +153,9 @@ div {
   background-color: #555;
   /* Darker color when hovering */
 }
+
+.icon {
+  cursor: pointer;
+  border-radius: 9999px;
+  padding: 4px;
+}

@@ -16,6 +16,7 @@ import { ContactForm } from "./ContactForm";
 import { IoMdRemoveCircle } from "react-icons/io";
 import { SearchTool } from "./SearchTool";
 import { languageContext } from "../global/Language";
+import { BsDashLg } from "react-icons/bs";
 
 export type ContactsListProps = {
 	children: ContactUI[];
@@ -26,6 +27,8 @@ export type ContactsListProps = {
 	style?: CSSProperties;
 	selected?: number;
 	showRemove?: boolean;
+	removeSize?: number;
+	itemsHeight?: number;
 };
 
 export function ContactsList(props: ContactsListProps) {
@@ -39,13 +42,17 @@ export function ContactsList(props: ContactsListProps) {
 			{props.children.map((contact, idx) => (
 				<div className="flex-row space-x-2 items-center">
 					{props.showRemove && (
-						<IoMdRemoveCircle
-							className="cursor-pointer"
-							color={fixedTheme.red}
+						<BsDashLg
+							className="icon"
+							style={{ alignSelf: "center", backgroundColor: fixedTheme.red }}
+							color="white"
 							onClick={() => props.onRemoveRequested?.(contact)}
+							strokeWidth={5}
+							size={props.removeSize || 20}
 						/>
 					)}
 					<ContactItem
+						height={props.itemsHeight}
 						contact={contact}
 						user={cuser}
 						onClick={() => {
@@ -61,10 +68,16 @@ export function ContactsList(props: ContactsListProps) {
 export type ContactItemProps = {
 	user: ContactUI;
 	contact: ContactUI;
+	height?: number;
 	onClick?: () => void;
 };
 
-export function ContactItem({ contact, user, onClick }: ContactItemProps) {
+export function ContactItem({
+	contact,
+	user,
+	onClick,
+	height,
+}: ContactItemProps) {
 	const language = useContext(languageContext);
 
 	return (
@@ -80,6 +93,7 @@ export function ContactItem({ contact, user, onClick }: ContactItemProps) {
 			onClick={() => {
 				onClick?.();
 			}}
+			height={height}
 			className="w-full p-1"
 		/>
 	);

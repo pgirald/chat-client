@@ -15,6 +15,8 @@ import Modal from "react-modal";
 import { E, empty } from "../utils";
 import { env } from "process";
 import profileImage from "../assets/chat_default.png";
+import { BsX } from "react-icons/bs";
+import { BsXLg } from "react-icons/bs";
 
 export function chatLabel(chat: ChatUI, user: User, language: Language) {
 	let chatName: string;
@@ -41,7 +43,7 @@ export function subsConnected(chat: ChatUI, user: User) {
 		.every((sub) => sub.connected);
 }
 
-export function chatImg(chat: ChatUI, user: User) {
+export function chatImg(chat: ChatUI, user: User): string {
 	if (chat.img) {
 		return chat.img;
 	}
@@ -66,24 +68,32 @@ export type CloseFrameProps = {
 	style?: CSSProperties;
 };
 
-export function CloseFrame(props: CloseFrameProps) {
-	return (
-		<div
-			className={`items-end h-fit w-fit ${E(props.className)}`}
-			style={props.style}
-		>
-			<IoMdCloseCircle
-				className="cursor-pointer absolute"
-				onClick={props.onCloseRequested}
-				color={fixedTheme.red}
-				size={props.iconSize || 25}
-			/>
-			<div className={props.wrapperClassName} style={{ ...props.wrapperStyle }}>
-				{props.children}
+export const CloseFrame = forwardRef(
+	(props: CloseFrameProps, ref?: ForwardedRef<HTMLDivElement>) => {
+		return (
+			<div
+				className={`-:items-end -:h-fit -:w-fit ${E(props.className)}`}
+				style={props.style}
+				ref={ref}
+			>
+				<BsXLg
+					className="icon"
+					color="white"
+					style={{ backgroundColor: fixedTheme.red, margin: 4 }}
+					strokeWidth={1}
+					onClick={props.onCloseRequested}
+					size={props.iconSize || 25}
+				/>
+				<div
+					className={props.wrapperClassName}
+					style={{ ...props.wrapperStyle }}
+				>
+					{props.children}
+				</div>
 			</div>
-		</div>
-	);
-}
+		);
+	}
+);
 
 // export type ClosableModalProps = {
 // 	frameProps?: Omit<CloseFrameProps, "children" | "isOpen">;

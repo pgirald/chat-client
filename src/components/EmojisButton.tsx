@@ -19,7 +19,8 @@ import { E, empty, getFileExtension, truncateStr } from "../utils";
 import { CloseFrame } from "./utils";
 import Picker from "@emoji-mart/react";
 import { setNativeValue } from "../utils/HTML_native";
-import { PiSmileyFill } from "react-icons/pi";
+import { PiSmileyFill, PiToteSimple } from "react-icons/pi";
+import smile from "../assets/smile.svg";
 
 type InputSelection = { start?: number; end?: number };
 
@@ -36,6 +37,7 @@ export type EmojisButtonProps = {
 
 export function EmojisButton(props: EmojisButtonProps) {
 	const [showEmos, setShowEmos] = useState(false);
+
 	const selectionRef = useRef<InputSelection>({
 		start: props.inputRef.current?.value.length,
 		end: props.inputRef.current?.value.length,
@@ -43,6 +45,7 @@ export function EmojisButton(props: EmojisButtonProps) {
 	const componentRef = useRef<HTMLDivElement>(null);
 	const pickerRef = useRef<HTMLDivElement>(null);
 	const buttonRef = useRef<HTMLDivElement>(null);
+	const frameRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		const inputElm = props.inputRef.current!;
@@ -63,6 +66,40 @@ export function EmojisButton(props: EmojisButtonProps) {
 		};
 	}, []);
 
+	useEffect(() => {
+		if (!showEmos || !componentRef.current || !frameRef.current) {
+			return;
+		}
+
+		const parentRect = componentRef.current.getBoundingClientRect();
+		const componentRect = frameRef.current.getBoundingClientRect();
+
+		// By default, place the component at the top-right of the parent
+		let bottom = window.innerHeight - parentRect.top;
+		let left = parentRect.left + parentRect.width;
+		let top = window.innerHeight - bottom - componentRect.height;
+		let right = window.innerWidth - left - componentRect.width;
+
+		console.log(`t:${top} r:${right} b:${bottom} l:${left}`);
+
+		if (top < 0) {
+			bottom = window.innerHeight - componentRect.height; // Reposition to the top of the screen
+		}
+		if (left < 0) {
+			left = 0; // Reposition to the left of the screen
+		}
+		if (right < 0) {
+			left = window.innerWidth - componentRect.width; // Stay within screen's right edge
+		}
+		if (bottom < 0) {
+			bottom = 0; // Stay within screen's bottom edge
+		}
+
+		// Apply the new position
+		frameRef.current.style.bottom = `${bottom}px`;
+		frameRef.current.style.left = `${left}px`;
+	}, [showEmos]);
+
 	return (
 		<div
 			ref={componentRef}
@@ -71,13 +108,15 @@ export function EmojisButton(props: EmojisButtonProps) {
 		>
 			{showEmos && (
 				<CloseFrame
-					className="absolute left-full bottom-full rounded-md"
+					className="fixed rounded-md overflow-auto border h-[500px] w-64"
 					style={{
+						//visibility: showEmos ? "visible" : "hidden",
 						backgroundColor: props.frameBg,
 					}}
 					onCloseRequested={() => {
 						setShowEmos(false);
 					}}
+					ref={frameRef}
 				>
 					<div ref={pickerRef}>
 						<Picker
@@ -112,9 +151,12 @@ export function EmojisButton(props: EmojisButtonProps) {
 				</CloseFrame>
 			)}
 			<div ref={buttonRef}>
-				<PiSmileyFill
-					className="cursor-pointer p-0 m-0"
-					color={props.color}
+				<img
+					className="icon"
+					src={smile}
+					style={{ backgroundColor: props.color, padding: 6 }}
+					width={props.size}
+					height={props.size}
 					onClick={() => {
 						if (showEmos) {
 							setShowEmos(false);
@@ -122,7 +164,6 @@ export function EmojisButton(props: EmojisButtonProps) {
 							setShowEmos(true);
 						}
 					}}
-					size={props.size || 30}
 				/>
 			</div>
 		</div>

@@ -8,7 +8,7 @@ import {
 } from "react";
 import { MessageData } from "./Chat";
 import { Modal, ModalHandler } from "./Modal";
-import { themeContext } from "../global/Theme";
+import { fixedTheme, themeContext } from "../global/Theme";
 import { AttachmentsDisplay, FileData } from "./AttachmentsDisplay";
 import { IoMdRemoveCircle } from "react-icons/io";
 import { FilePickerWrapper } from "./FilePickerWrapper";
@@ -16,6 +16,8 @@ import { RiAddBoxFill } from "react-icons/ri";
 import { getFileExtension, truncateStr } from "../utils";
 import { MessageInput } from "./MessagesInput";
 import { PiPlusCircleFill } from "react-icons/pi";
+import { BsDashLg, BsPlus } from "react-icons/bs";
+import { BsDash } from "react-icons/bs";
 
 export const AttachmentsModal = forwardRef(
 	(
@@ -34,6 +36,8 @@ export const AttachmentsModal = forwardRef(
 		const theme = useContext(themeContext);
 		const [_files, setFiles] = useState<FileData[]>([]);
 
+		const iconsSize = 24;
+
 		useEffect(() => {
 			setFiles(files2fileData(files));
 		}, [files]);
@@ -47,31 +51,32 @@ export const AttachmentsModal = forwardRef(
 
 			// 	</CloseFrame>
 			// </Modal>
-			<Modal
-				ref={ref}
-				closeFrameProps={{ wrapperClassName: "space-y-5" }}
-			>
+			<Modal ref={ref} closeFrameProps={{ wrapperClassName: "space-y-5 p-2" }}>
 				<AttachmentsDisplay
-					className="h-fit max-h-60 w-80 pr-5 overflow-y-scroll"
+					className="h-fit max-h-60 w-[45ch] pr-5 overflow-y-scroll"
+					maxCharacters={30}
+					style={{ color: theme.content }}
 					files={_files}
 					iconColor={theme.breaker}
 					wraper={({ children, file }) => (
 						<div className="flex-row spacex-x-2 cursor-pointer">
-							<IoMdRemoveCircle
-								className="self-center"
-								color={theme.breaker}
+							<BsDashLg
+								className="icon"
+								style={{ alignSelf: "center", backgroundColor: fixedTheme.red }}
+								color="white"
 								onClick={() => {
 									const fileIdx = _files.indexOf(file);
 									_files.splice(fileIdx, 1);
 									setFiles([..._files]);
 								}}
+								strokeWidth={5}
 							/>
 							{children}
 						</div>
 					)}
 				/>
 				<MessageInput
-					className="w-full"
+					className="w-full h-fit"
 					onSendMessage={() => {
 						onAccept?.({
 							attachments: _files,
@@ -80,10 +85,21 @@ export const AttachmentsModal = forwardRef(
 					}}
 					ref={msgRef}
 					defaultValue={defaultValue}
+					iconsSize={iconsSize}
 					onFilesSelected={(files) => {
 						setFiles([...files2fileData(files), ..._files]);
 					}}
-					filesIcon={PiPlusCircleFill}
+					filesIcon={
+						<BsPlus
+							className="icon"
+							style={{
+								backgroundColor: theme.breaker,
+							}}
+							size={iconsSize}
+							strokeWidth="0.5px"
+							color="white"
+						/>
+					}
 				/>
 			</Modal>
 		);

@@ -90,6 +90,21 @@ export function SettingsForm() {
 			{newChanges && <GuardChangesButtons onDiscardRequested={discard} />}
 		</WindowTemplate>
 	);
+
+	type SettingProps = {
+		header: string;
+		content: ReactNode;
+	};
+
+	function Setting(props: SettingProps) {
+		return (
+			<Info
+				header={props.header}
+				content={props.content}
+				headerRight={<BsFillQuestionCircleFill color={theme.content} />}
+			/>
+		);
+	}
 }
 
 type SettingSwitch = {
@@ -100,25 +115,11 @@ type SettingSwitch = {
 function SettingSwitch(props: SettingSwitch) {
 	return (
 		<Switch
+			className="mt-1"
 			onChange={props.onChange}
 			checked={props.checked}
 			onColor={fixedTheme.logoBlue}
 			offColor={fixedTheme.elementGray}
-		/>
-	);
-}
-
-type SettingProps = {
-	header: string;
-	content: ReactNode;
-};
-
-function Setting(props: SettingProps) {
-	return (
-		<Info
-			header={props.header}
-			content={props.content}
-			headerRight={<BsFillQuestionCircleFill />}
 		/>
 	);
 }

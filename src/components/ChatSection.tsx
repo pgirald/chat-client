@@ -15,6 +15,7 @@ import { Modal, ModalHandler } from "./Modal";
 import { ChatForm } from "./ChatForm";
 import { SearchTool } from "./SearchTool";
 import { EditableImg } from "./EditableImg";
+import { BsPlus } from "react-icons/bs";
 
 export type ChatMessageData = {
 	msg: MessageData;
@@ -56,20 +57,26 @@ export function ChatSection(props: ChatSectionProps) {
 					<div className="items-start justify-center w-full h-1/5">
 						<WindowHeader content={language.messages} />
 					</div>
-					<div className="flex-row space-x-2 h-fit w-full">
+					<div className="flex-row space-x-2 h-fit w-full items-center">
 						<SearchTool
 							style={{ height: toolsHeight }}
 							showLen
 							lenSize={iconsSize}
 						/>
-						<BiSolidPlusCircle
-							className="self-center cursor-pointer mr-2"
-							color={theme.breaker}
-							size={toolsHeight}
-							onClick={() => {
-								newChatModalRef.current?.openModal();
-							}}
-						/>
+						<div className="p-1">
+							<BsPlus
+								className="icon"
+								style={{
+									backgroundColor: theme.breaker,
+								}}
+								size={toolsHeight-6}
+								strokeWidth="0.5px"
+								color="white"
+								onClick={() => {
+									newChatModalRef.current?.openModal();
+								}}
+							/>
+						</div>
 					</div>
 					<ChatsList
 						className="space-y-2 overflow-y-scroll h-5/6 w-full"
@@ -84,12 +91,12 @@ export function ChatSection(props: ChatSectionProps) {
 					</ChatsList>
 				</div>
 				<div className="h-full w-[70%]">
-					{selectedChat && (
-						<>
-							<div
-								className="w-full flex-row justify-start items-center space-x-2 h-1/5"
-								style={{ color: theme.content, backgroundColor: theme.bg }}
-							>
+					<div
+						className="w-full flex-row justify-start items-center space-x-2 h-1/5"
+						style={{ color: theme.content, backgroundColor: theme.bg }}
+					>
+						{selectedChat && (
+							<>
 								<EditableImg src={chatImg(selectedChat, user)} size={70} />
 								<Label content={chatLabel(selectedChat, user, language)} />
 								<div className="flex-row w-full h-fit justify-end">
@@ -102,20 +109,21 @@ export function ChatSection(props: ChatSectionProps) {
 										size={iconsSize}
 									/>
 								</div>
-							</div>
-							<Chat
-								className="h-5/6 w-full space-y-2"
-								chat={selectedChat}
-								onMessage={(msgData) => {
-									props.onMessage?.({
-										msg: msgData,
-										selectedChat,
-										idx: selectedIdxRef.current!,
-									});
-								}}
-							/>
-						</>
-					)}
+							</>
+						)}
+					</div>
+					<Chat
+						className="h-5/6 w-full"
+						chat={selectedChat}
+						onMessage={(msgData) => {
+							const chat = selectedChat!;
+							props.onMessage?.({
+								msg: msgData,
+								selectedChat: chat,
+								idx: selectedIdxRef.current!,
+							});
+						}}
+					/>
 				</div>
 			</div>
 			<Modal ref={newChatModalRef}>

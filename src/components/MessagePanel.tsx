@@ -14,6 +14,7 @@ import { fixedTheme, themeContext } from "../global/Theme";
 import { IoIosArrowDown } from "react-icons/io";
 import { AttachmentsDisplay } from "./AttachmentsDisplay";
 import { getFileExtension } from "../utils";
+import { AppButton } from "./AppButton";
 
 export type MessagePanelProps = {
 	messages: MessageUI[];
@@ -34,7 +35,7 @@ export function MessagePanel(props: MessagePanelProps) {
 	useEffect(() => {
 		scrollToBottom();
 	}, [props.messages]);
-
+	
 	useEffect(() => {
 		// if (props.messages.length > msgsCountRef.current) {
 		// 	setNewMsgs(
@@ -61,7 +62,7 @@ export function MessagePanel(props: MessagePanelProps) {
 			}}
 		>
 			<div
-			className="overflow-y-scroll w-full h-full px-16"
+				className="overflow-y-scroll w-full h-full px-10"
 				ref={panelRef}
 				onScroll={(e) => {
 					if (scrolledToBottom(e.currentTarget)) {
@@ -114,11 +115,7 @@ export function MessageItem(props: MessageItemProps) {
 	const bordersWidth = 20;
 	const theme = useContext(themeContext);
 
-	const labelsStyle: CSSProperties = {
-		font: "Roboto",
-		color: theme.content,
-		fontSize: 10,
-	};
+	const labelsClass = "font-Roboto text-xs";
 
 	const msgColor = props.isFromUser
 		? fixedTheme.logoOrange
@@ -131,7 +128,7 @@ export function MessageItem(props: MessageItemProps) {
 	switch (props.message.status) {
 		case "Sent":
 			status = (
-				<span style={labelsStyle}>
+				<span className={labelsClass} style={{ color: theme.content }}>
 					{receptionTime.toLocaleDateString(language.dateFormat, {
 						day: "2-digit",
 						month: "short",
@@ -142,11 +139,22 @@ export function MessageItem(props: MessageItemProps) {
 				</span>
 			);
 			break;
+
 		case "Not sent":
-			status = <button style={styles.resendBtn}>{language.reSend}</button>;
+			status = (
+				<AppButton
+					content={language.reSend}
+					className="mb-3"
+					style={{ backgroundColor: fixedTheme.red }}
+				/>
+			);
 			break;
 		case "Sending":
-			status = <span style={labelsStyle}>{language.sending}</span>;
+			status = (
+				<span className={labelsClass} style={{ color: theme.content }}>
+					{language.sending}
+				</span>
+			);
 			break;
 	}
 
@@ -183,7 +191,7 @@ export function MessageItem(props: MessageItemProps) {
 						className="self-end rounded-full px-2 text-xs"
 						style={{ backgroundColor: theme.breaker }}
 					>
-						{props.isFromUser ? "yourself" : props.message.sender.username}
+						{props.isFromUser ? language.you : props.message.sender.username}
 					</div>
 				</div>
 				<div
@@ -197,15 +205,3 @@ export function MessageItem(props: MessageItemProps) {
 		</div>
 	);
 }
-
-const styles: StyleSheet = {
-	resendBtn: {
-		font: "Roboto",
-		backgroundColor: fixedTheme.red,
-		color: "white",
-		borderRadius: 5,
-		fontSize: 12,
-		padding: "2px 5px 2px 5px",
-		marginBottom: 3,
-	},
-};

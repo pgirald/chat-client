@@ -10,7 +10,7 @@ export type AppButtonProps = {
 export function AppButton(props: AppButtonProps) {
 	return (
 		<div
-			className={`-:rounded-md -:p-2 -:cursor-pointer -:font-Roboto -:text-white -:font-bold -:text-sm -:items-center ${props.className}`}
+			className={`-:rounded-md -:px-2 -:py-1 -:cursor-pointer -:font-Roboto -:text-white -:font-bold -:text-sm -:items-center ${props.className}`}
 			style={props.style}
 			onClick={props.onClick}
 		>
