@@ -14,9 +14,10 @@ import {
 	themeContext,
 } from "../../global/Theme";
 import { render } from "@testing-library/react";
-import { fakeViews } from "./Mocks";
-import { ReactNode, useState } from "react";
+import { fakeViews, MockServer } from "./Mocks";
+import { ReactNode, useRef, useState } from "react";
 import { object } from "prop-types";
+import { sourceContext } from "../../global/Source";
 
 export const globalContext = Context(light, english, 1);
 
@@ -25,6 +26,8 @@ export function Context(theme: Theme, language: Language, userIdx: number) {
 		const [_theme, setTheme] = useState<ThemeContext>(theme);
 
 		const [_language, setLanguage] = useState<LanguageContext>(language);
+
+		const sourceRef = useRef(MockServer());
 
 		const _setTheme = (value: Theme) => {
 			if (value !== light && value !== dark) {
@@ -46,20 +49,22 @@ export function Context(theme: Theme, language: Language, userIdx: number) {
 		Object.setPrototypeOf(_language, { set: _setLanguage });
 
 		return (
-			<themeContext.Provider value={_theme}>
-				<languageContext.Provider value={_language}>
-					<userContext.Provider
-						value={{
-							...fakeViews[userIdx].user,
-							blocked: false,
-							muted: false,
-							connected: false,
-						}}
-					>
-						{children}
-					</userContext.Provider>
-				</languageContext.Provider>
-			</themeContext.Provider>
+			<sourceContext.Provider value={sourceRef.current}>
+				<themeContext.Provider value={_theme}>
+					<languageContext.Provider value={_language}>
+						<userContext.Provider
+							value={{
+								...fakeViews[userIdx].user,
+								blocked: false,
+								muted: false,
+								connected: false,
+							}}
+						>
+							{children}
+						</userContext.Provider>
+					</languageContext.Provider>
+				</themeContext.Provider>
+			</sourceContext.Provider>
 		);
 	};
 	return {

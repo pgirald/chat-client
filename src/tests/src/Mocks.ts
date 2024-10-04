@@ -10,8 +10,9 @@ import {
 } from "../../Chore/Types";
 import { ContactStatusData } from "chat-api";
 import { FindBy } from "@testing-library/react";
-import { parse, fromJSON } from "flatted";
+import { fromJSON } from "flatted";
 import rawViews from "../fakeViews.json";
+import { json } from "stream/consumers";
 
 export type FViews = {
 	user: UserUI;
@@ -43,6 +44,7 @@ export function MockServer(): Source {
 	let consumer: UserUI;
 	let chats: ChatUI[];
 	let settings: SettingsUI | undefined;
+	let authenticated = false;
 	return {
 		async authenticate(email: string, password: string): Promise<void> {
 			await sleep(sleepTime);
@@ -53,6 +55,7 @@ export function MockServer(): Source {
 			consumer = userData.user;
 			settings = userData.settings;
 			chats = userData.chats.sort((chat1, chat2) => chat1.id - chat2.id);
+			authenticated = true;
 		},
 		async getMyChats(page: number, count: number): Promise<ChatUI[]> {
 			await sleep(sleepTime);
@@ -66,34 +69,53 @@ export function MockServer(): Source {
 			}
 			const start = page * count;
 			const end = start + count;
-			return chats.slice(start, end);
+			return deepCopy(chats.slice(start, end));
 		},
 		async getMyConfig(): Promise<SettingsUI | undefined> {
 			await sleep(sleepTime);
-			return settings;
+			return settings && deepCopy(settings);
 		},
 		async getAllMyChats() {
 			await sleep(sleepTime);
-			return chats;
+			return deepCopy(chats);
 		},
 		async sendMessage(content, attachments, chat) {
 			await sleep(sleepTime);
+			const _chat = chats.find((_chat) => _chat.id === chat.id);
+			if (!_chat) {
+				throw Error("The specified chat is invalid");
+			}
 			const message: MessageUI = {
-				id: chat.messages[-1].id + 1,
-				attachments: attachments.map((attachment) => ({
-					name: attachment.name,
-					url: attachment.name,
-				})),
+				id: _chat.messages.at(-1)?.id || 0 + 1,
+				attachments: attachments,
 				content: content,
 				receptionTime: new Date(Date.now()),
 				sender: { ...consumer, blocked: false, muted: false },
-				status: "Sending",
+				status: "Sent",
 			};
-			chat.messages.push(message);
-			return message;
+			_chat.messages.push(message);
+			return deepCopy(message);
 		},
 		emitter,
+		get authenticated() {
+			return authenticated;
+		},
 	};
+}
+
+const reviver = (key: any, value: any) => {
+	// Check if the value is a string in ISO 8601 date format
+	if (
+		typeof value === "string" &&
+		/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/.test(value)
+	) {
+		return new Date(value); // Convert to Date object
+	}
+	return value; // Return other values unchanged
+};
+
+function deepCopy(obj: Object) {
+	return JSON.parse(JSON.stringify(obj), reviver);
 }
 
 const emitter: Emitter = {

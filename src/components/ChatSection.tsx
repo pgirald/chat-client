@@ -33,12 +33,6 @@ export type ChatSectionProps = {
 	onChatSelected?: (chat: ChatUI, idx: number) => void;
 };
 
-export type StatusCardProps = {
-	isConnected: boolean;
-	label: string;
-	className?: string;
-};
-
 export function ChatSection(props: ChatSectionProps) {
 	const selectedIdxRef = useRef<number>();
 	const [selectedChat, setSelectedChat] = useState<ChatUI>();
@@ -51,7 +45,10 @@ export function ChatSection(props: ChatSectionProps) {
 	const iconsSize = 20;
 
 	return (
-		<div className={props.className} style={props.style}>
+		<div
+			className={props.className}
+			style={{ backgroundColor: theme.bg, ...props.style }}
+		>
 			<div className="flex-row h-full w-full">
 				<div className="w-[30%] h-full">
 					<div className="items-start justify-center w-full h-1/5">
@@ -69,7 +66,7 @@ export function ChatSection(props: ChatSectionProps) {
 								style={{
 									backgroundColor: theme.breaker,
 								}}
-								size={toolsHeight-6}
+								size={toolsHeight - 6}
 								strokeWidth="0.5px"
 								color="white"
 								onClick={() => {

@@ -204,7 +204,7 @@ function Option(props: OptionProps) {
 			className="cursor-pointer flex-row space-x-1 font-Roboto font-bold text-sm items-center"
 		>
 			{props.icon}
-			{props.label}
+			<span>{props.label}</span>
 		</div>
 	);
 }

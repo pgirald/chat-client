@@ -106,7 +106,7 @@ export function ChatForm(props: ChatFormProps) {
 				header={language.members}
 				content={
 					<ContactsList
-						className="max-h-40"
+						className={`${isOwner ? "max-h-40" : "max-h-52"}`}
 						onContactClicked={(contact) => {
 							setSelectedContact(contact);
 							contactModalRef.current?.openModal();

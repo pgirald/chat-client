@@ -89,7 +89,7 @@ export const spanish: Language = {
 	lastName: "Apellido",
 	you: "Usted",
 	settings: "Opciones",
-	language: "Lenguage",
+	language: "Lenguaje",
 	about: "Nosotros",
 	chats: "Chats",
 	chatApproval: "Aprobación de Chats",
