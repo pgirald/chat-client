@@ -1,11 +1,8 @@
 import { CSSProperties } from "react";
-import { ConvertPropsTo } from "./General";
 
 export type StyleSheet = {
 	readonly [index: string]: CSSProperties;
 };
-
-export type InputErrors<T extends object, E = string> = ConvertPropsTo<T, E>;
 
 export type Optional<T extends object> = { [prop in keyof T]?: T[prop] };
 

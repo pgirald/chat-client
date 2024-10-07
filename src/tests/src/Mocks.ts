@@ -1,6 +1,6 @@
 import { Emitter, Source } from "../../Chore/Source";
 import * as fs from "fs";
-import { EventHandler, InvalidParamsError, sleep } from "../../utils";
+import { EventHandler,sleep } from "../../utils/General";
 import {
 	ChatUI,
 	ContactUI,
@@ -13,6 +13,7 @@ import { FindBy } from "@testing-library/react";
 import { fromJSON } from "flatted";
 import rawViews from "../fakeViews.json";
 import { json } from "stream/consumers";
+import { InvalidParamsError } from "../../utils/objectOps";
 
 export type FViews = {
 	user: UserUI;

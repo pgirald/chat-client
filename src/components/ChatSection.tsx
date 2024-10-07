@@ -1,21 +1,21 @@
 import { CSSProperties, useContext, useRef, useState } from "react";
 import { User } from "chat-api";
-import { Chat, MessageData } from "./Chat";
 import { ChatUI } from "../Chore/Types";
-import { fixedTheme, themeContext, useTheme } from "../global/Theme";
+import {  themeContext } from "../global/Theme";
 import { BiSolidPlusCircle } from "react-icons/bi";
 import { IoSearchSharp } from "react-icons/io5";
-import { WindowHeader, Label } from "./Styling";
 import { languageContext } from "../global/Language";
-import { chatImg, chatLabel } from "./utils";
+import { chatImg, chatLabel } from "../Chore/view";
 import { userContext } from "../global/User";
 import { HiOutlineDotsVertical } from "react-icons/hi";
-import { ChatsList } from "./ChatsList";
-import { Modal, ModalHandler } from "./Modal";
-import { ChatForm } from "./ChatForm";
-import { SearchTool } from "./SearchTool";
-import { EditableImg } from "./EditableImg";
+import { ChatsList } from "./connections/ChatsList";
+import { Modal, ModalHandler } from "./reusables/Modal";
+import { ChatForm } from "./repo_components/ChatRepoForm";
+import { EditableImg } from "./reusables/EditableImg";
 import { BsPlus } from "react-icons/bs";
+import { Chat, MessageData } from "./chat/Chat";
+import { Label, WindowHeader } from "./app_style/Template";
+import { SearchTool } from "./app_style/SearchTool";
 
 export type ChatMessageData = {
 	msg: MessageData;

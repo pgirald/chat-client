@@ -5,8 +5,8 @@ import {
 	Settings,
 	User,
 } from "chat-api";
-import { EventHandler } from "../utils";
 import { AttachmentUI, ChatUI, MessageUI } from "./Types";
+import { EventHandler } from "../utils/General";
 
 export type Source = {
 	authenticate: (email: string, password: string) => Promise<void>;

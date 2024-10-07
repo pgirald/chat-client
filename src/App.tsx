@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import "./App.css";
-import { E } from "./utils/General";
 import { User } from "chat-api";
 import { ChatSection } from "./components/ChatSection";
 import { globalContext } from "./tests/src/Context";
@@ -8,9 +7,9 @@ import { Layout } from "./components/Layout";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { BsPersonFill } from "react-icons/bs";
 import { themeContext } from "./global/Theme";
-import { ChatPage } from "./components/ChatPage";
+import { ChatPage } from "./components/ChatController";
 import { MockServer } from "./tests/src/Mocks";
-import { LoadingModal } from "./components/LoadingModal";
+import { LoadingModal } from "./components/reusables/LoadingModal";
 import { sourceContext } from "./global/Source";
 
 function App() {

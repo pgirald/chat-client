@@ -1,8 +1,4 @@
-import {
-	InvalidParamsError,
-	range,
-	typedKeys,
-} from "../utils/General";
+import { InvalidParamsError, range, typedKeys } from "../utils/objectOps";
 
 const obj: { one: string; two: string; three: number } = Object.create({
 	protoProp: "moli",

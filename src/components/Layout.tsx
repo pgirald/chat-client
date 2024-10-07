@@ -1,6 +1,5 @@
 import { ReactNode, useContext, useRef } from "react";
 import { dark, fixedTheme, light, themeContext } from "../global/Theme";
-import { Logo } from "./Styling";
 import { BsGearWide } from "react-icons/bs";
 import { BsTranslate } from "react-icons/bs";
 import { BsFillInfoCircleFill } from "react-icons/bs";
@@ -11,16 +10,17 @@ import { RxTriangleDown } from "react-icons/rx";
 import { english, languageContext, spanish } from "../global/Language";
 import profileImg from "../assets/profile.png";
 import { userContext } from "../global/User";
-import { Modal, ModalHandler } from "./Modal";
-import { SettingsForm } from "./SettingsForm";
-import { EditableImg } from "./EditableImg";
-import { PrivilegesForm } from "./PrivilegesForm";
+import { Modal, ModalHandler } from "./reusables/Modal";
+import { SettingsForm } from "./repo_components/SettingsRepoForm";
+import { EditableImg } from "./reusables/EditableImg";
+import { PrivilegesForm } from "./repo_components/PrivilegesRepoForm";
 import { IconType } from "react-icons";
 import { BsPersonCircle } from "react-icons/bs";
 import { BsFillKeyFill } from "react-icons/bs";
 import { BsBoxArrowLeft } from "react-icons/bs";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { ContactForm } from "./ContactForm";
+import { ContactForm } from "./repo_components/ContactRepoForm";
+import { Logo } from "./app_style/Logo";
 
 export type LayoutProps = {
 	children: ReactNode;

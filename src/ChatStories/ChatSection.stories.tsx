@@ -4,7 +4,7 @@ import { globalContext } from "../tests/src/Context";
 import { ChatMessageData, ChatSection } from "../components/ChatSection";
 import { ChatUI } from "../Chore/Types";
 import { useRef } from "react";
-import { useChats } from "./UseChats";
+import { useChats } from "./src/UseChats";
 
 const meta: Meta<typeof ChatSection> = {
 	component: ChatSection,
