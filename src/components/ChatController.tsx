@@ -4,11 +4,11 @@ import { ChatMessageData, ChatSection } from "./ChatSection";
 import { Indexed, Optional } from "../utils/Types";
 import { AttachmentData, ContactStatusData } from "chat-api";
 import { Client, Source } from "../Chore/Source";
-import { useLoading } from "./reusables/LoadingModal";
 import { ChatUI, MessageUI, UserUI } from "../Chore/Types";
-import { userContext } from "../global/User";
 import { sourceContext } from "../global/Source";
 import { range } from "../utils/objectOps";
+import { useUser } from "../global/User";
+import { useLoading } from "../global/Loading";
 
 type _User = {
 	userID: string;
@@ -71,7 +71,7 @@ export function ChatPage(props: ChatPageProps) {
 	const [isConnected, setIsConnected] = useState<boolean>(false);
 	const [chats, setChats] = useState<ChatUI[]>([]);
 	const chatsRef = useRef(chats);
-	const user = useContext(userContext);
+	const user = useUser();
 	const source = useContext(sourceContext);
 
 	useEffect(() => {

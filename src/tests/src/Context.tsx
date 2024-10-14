@@ -5,7 +5,6 @@ import {
 	languageContext,
 	spanish,
 } from "../../global/Language";
-import { userContext } from "../../global/User";
 import {
 	dark,
 	light,
@@ -14,12 +13,13 @@ import {
 	themeContext,
 } from "../../global/Theme";
 import { render } from "@testing-library/react";
-import { fakeViews, MockServer } from "./Mocks";
+import { fakeViews, MockServer, MockSource } from "./Mocks";
 import { ReactNode, useRef, useState } from "react";
 import { object } from "prop-types";
 import { sourceContext } from "../../global/Source";
+import { GlobalLoading } from "../../global/Loading";
 
-export const globalContext = Context(light, english, 1);
+export const globalContext = Context(light, english, 0);
 
 export function Context(theme: Theme, language: Language, userIdx: number) {
 	const ContextNode = ({ children }: { children: ReactNode }) => {
@@ -28,6 +28,11 @@ export function Context(theme: Theme, language: Language, userIdx: number) {
 		const [_language, setLanguage] = useState<LanguageContext>(language);
 
 		const sourceRef = useRef(MockServer());
+
+		(sourceRef.current as MockSource)._authenticate(
+			fakeViews[userIdx].user.email,
+			""
+		);
 
 		const _setTheme = (value: Theme) => {
 			if (value !== light && value !== dark) {
@@ -52,16 +57,7 @@ export function Context(theme: Theme, language: Language, userIdx: number) {
 			<sourceContext.Provider value={sourceRef.current}>
 				<themeContext.Provider value={_theme}>
 					<languageContext.Provider value={_language}>
-						<userContext.Provider
-							value={{
-								...fakeViews[userIdx].user,
-								blocked: false,
-								muted: false,
-								connected: false,
-							}}
-						>
-							{children}
-						</userContext.Provider>
+						<GlobalLoading visible={false}>{children}</GlobalLoading>
 					</languageContext.Provider>
 				</themeContext.Provider>
 			</sourceContext.Provider>

@@ -2,14 +2,14 @@ import { useContext, useRef } from "react";
 import { languageContext } from "../../global/Language";
 import { AppButton } from "../app_style/AppButton";
 import { fixedTheme } from "../../global/Theme";
-import { userContext } from "../../global/User";
 import { Modal, ModalHandler } from "../reusables/Modal";
 import { Info } from "../app_style/Info";
 import { WindowTemplate } from "../app_style/Template";
+import { useUser } from "../../global/User";
 
 export function PrivilegesForm() {
 	const language = useContext(languageContext);
-	const user = useContext(userContext);
+	const user = useUser();
 
 	const roleModalRef = useRef<ModalHandler>(null);
 

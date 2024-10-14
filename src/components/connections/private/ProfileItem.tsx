@@ -10,7 +10,7 @@ import { Label } from "../../app_style/Template";
 import { themeContext } from "../../../global/Theme";
 import { E } from "../../../utils/StringOps";
 
-export type FontProps = { color?: string };
+export type FontProps = { color?: CSSProperties["color"] };
 
 export type ProfileItemProps = {
 	onClick?: () => void;

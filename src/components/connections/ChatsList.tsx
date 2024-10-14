@@ -9,10 +9,10 @@ import { StyleSheet } from "../../utils/Types";
 import { Language, languageContext } from "../../global/Language";
 import { chatImg, chatLabel } from "../../Chore/view";
 import { ChatUI } from "../../Chore/Types";
-import { userContext } from "../../global/User";
 import { fixedTheme, themeContext } from "../../global/Theme";
 import { ProfileItem } from "./private/ProfileItem";
 import { E, truncateStr } from "../../utils/StringOps";
+import { useUser } from "../../global/User";
 
 export type ChatsListProps = {
 	children: ChatUI[];
@@ -24,7 +24,7 @@ export type ChatsListProps = {
 
 export const ChatsList = forwardRef<HTMLDivElement, ChatsListProps>(
 	(props: ChatsListProps, ref?: ForwardedRef<HTMLDivElement>) => {
-		const user = useContext(userContext)!;
+		const user = useUser();
 		const language = useContext(languageContext);
 
 		return (

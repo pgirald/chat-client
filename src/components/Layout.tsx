@@ -9,7 +9,6 @@ import { BsFillMoonFill } from "react-icons/bs";
 import { RxTriangleDown } from "react-icons/rx";
 import { english, languageContext, spanish } from "../global/Language";
 import profileImg from "../assets/profile.png";
-import { userContext } from "../global/User";
 import { Modal, ModalHandler } from "./reusables/Modal";
 import { SettingsForm } from "./repo_components/SettingsRepoForm";
 import { EditableImg } from "./reusables/EditableImg";
@@ -21,6 +20,7 @@ import { BsBoxArrowLeft } from "react-icons/bs";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ContactForm } from "./repo_components/ContactRepoForm";
 import { Logo } from "./app_style/Logo";
+import { useUser } from "../global/User";
 
 export type LayoutProps = {
 	children: ReactNode;
@@ -29,7 +29,7 @@ export type LayoutProps = {
 export const layoutPaddings = { left: 50, right: 10 };
 
 export function Layout(props: LayoutProps) {
-	const user = useContext(userContext);
+	const user = useUser()
 	const theme = useContext(themeContext);
 	const language = useContext(languageContext);
 

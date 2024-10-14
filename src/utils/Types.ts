@@ -13,3 +13,8 @@ export type Identity<T> = { [P in keyof T]: T[P] };
 export type Replace<T, K extends keyof T, TReplace> = Omit<T, K> & {
 	[P in K]: TReplace;
 };
+
+export type EventHandler<T extends Function> = {
+	add: (callBack: T) => void;
+	remove: (callback: T) => void;
+};

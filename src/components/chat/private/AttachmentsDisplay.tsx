@@ -56,7 +56,7 @@ export function AttachmentsDisplay(props: AttachmentsDisplayProps) {
 						key={props.wraper ? undefined : file.url}
 						className="flex space-x-1"
 						target="_blank"
-						href={file.url}
+						href={file.url} rel="noreferrer"
 					>
 						<FileIcon
 							className="p-0"

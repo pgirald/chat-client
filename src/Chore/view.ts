@@ -1,15 +1,6 @@
 import { User } from "chat-api";
 import { ChatUI } from "./Types";
 import { Language } from "../global/Language";
-import {
-	CSSProperties,
-	ForwardedRef,
-	forwardRef,
-	ReactNode,
-	useContext,
-	useState,
-} from "react";
-import { fixedTheme, themeContext } from "../global/Theme";
 import profileImage from "../assets/chat_default.png";
 import { BsXLg } from "react-icons/bs";
 

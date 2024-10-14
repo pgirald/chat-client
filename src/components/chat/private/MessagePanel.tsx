@@ -6,7 +6,6 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { userContext } from "../../../global/User";
 import { StyleSheet } from "../../../utils/Types";
 import { MessageUI } from "../../../Chore/Types";
 import { languageContext } from "../../../global/Language";
@@ -15,6 +14,8 @@ import { IoIosArrowDown } from "react-icons/io";
 import { AttachmentsDisplay } from "./AttachmentsDisplay";
 import { AppButton } from "../../app_style/AppButton";
 import { getFileExtension } from "../../../utils/StringOps";
+import { useUser } from "../../../global/User";
+import { scrolledToBottom, scrollToBottom } from "../../../utils/HTML_native";
 
 export type MessagePanelProps = {
 	messages: MessageUI[];
@@ -29,24 +30,16 @@ export function MessagePanel(props: MessagePanelProps) {
 
 	const [newMsgs, setNewMsgs] = useState(false);
 
-	const user = useContext(userContext);
-	const language = useContext(languageContext);
+	const user = useUser();
 
 	useEffect(() => {
-		scrollToBottom();
+		scrollToBottom(panelRef.current);
 	}, [props.messages]);
-	
+
 	useEffect(() => {
-		// if (props.messages.length > msgsCountRef.current) {
-		// 	setNewMsgs(
-		// 		props.messages
-		// 			.slice(msgsCountRef.current)
-		// 			.some((msg) => msg.sender.id !== user.id)
-		// 	);
-		// }
 		const newMsgs = props.messages.length > msgsCountRef.current;
 		if (newMsgs && wasAtBottomRef.current) {
-			scrollToBottom();
+			scrollToBottom(panelRef.current);
 		} else {
 			setNewMsgs(newMsgs);
 		}
@@ -85,24 +78,15 @@ export function MessagePanel(props: MessagePanelProps) {
 				<div
 					className="self-center absolute bottom-1 rounded-full cursor-pointer p-1"
 					style={{ backgroundColor: fixedTheme.green }}
-					onClick={scrollToBottom}
+					onClick={() => {
+						scrollToBottom(panelRef.current);
+					}}
 				>
 					<IoIosArrowDown color={fixedTheme.white} size={25} />
 				</div>
 			)}
 		</div>
 	);
-
-	function scrollToBottom() {
-		if (panelRef.current) {
-			panelRef.current.scrollTop = panelRef.current.scrollHeight;
-		}
-	}
-
-	function scrolledToBottom(div: HTMLDivElement) {
-		return Math.abs(div.scrollHeight - (div.scrollTop + div.clientHeight)) <= 1;
-		//return div.scrollTop + div.clientHeight === div.scrollHeight;
-	}
 }
 
 export type MessageItemProps = {

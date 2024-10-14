@@ -4,7 +4,6 @@ import { Modal, ModalHandler } from "../reusables/Modal";
 import { fixedTheme, themeContext } from "../../global/Theme";
 import profileImg from "../../assets/profile.png";
 import { languageContext } from "../../global/Language";
-import { userContext } from "../../global/User";
 import { EditableImg } from "../reusables/EditableImg";
 import { AppButton } from "../app_style/AppButton";
 import { useGuardChanges } from "../../utils/react/hooks/UseGuardChanges";
@@ -14,13 +13,14 @@ import { AppInput } from "../app_style/AppInput";
 import { WindowTemplate } from "../app_style/Template";
 import { Separator } from "../app_style/Separator";
 import { Info } from "../app_style/Info";
+import { useUser } from "../../global/User";
 
 export type ContactFormProps = { contact: UserUI };
 
 export function ContactForm(props: ContactFormProps) {
 	const theme = useContext(themeContext);
 	const language = useContext(languageContext);
-	const user = useContext(userContext);
+	const user = useUser();
 
 	const [contact, setContact, discard, newChanges] = useGuardChanges(
 		props.contact

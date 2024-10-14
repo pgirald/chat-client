@@ -56,6 +56,9 @@ export type Language = {
 	english: string;
 	spanish: string;
 	manageRoles: string;
+	addMembers: string;
+	allContacts: string;
+	selected: string;
 };
 
 export const spanish: Language = {
@@ -116,6 +119,9 @@ export const spanish: Language = {
 	english: "Inglés",
 	spanish: "Español",
 	manageRoles: "Administrar roles",
+	addMembers: "Añadir miembros",
+	allContacts: "Todos los contactos",
+	selected: "Seleccionados",
 };
 
 export const english: Language = {
@@ -176,6 +182,9 @@ export const english: Language = {
 	english: "English",
 	spanish: "Spanish",
 	manageRoles: "Manage roles",
+	addMembers: "Add members",
+	allContacts: "All contacts",
+	selected: "Selected",
 };
 
 export type LanguageContext = Language & { set?: (value: Language) => void };

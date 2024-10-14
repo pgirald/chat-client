@@ -2,10 +2,10 @@ import { Meta, StoryObj } from "@storybook/react/*";
 import "../index.css";
 import { globalContext } from "../../tests/src/Context";
 import { useContext, useEffect, useRef, useState } from "react";
-import { userContext } from "../../global/User";
 import { MessageUI } from "../../Chore/Types";
 import { useChats } from "../src/UseChats";
 import { Chat } from "../../components/chat/Chat";
+import { useUser } from "../../global/User";
 
 const meta: Meta<typeof Chat> = { component: Chat };
 
@@ -16,7 +16,7 @@ export const Sending: StoryObj<typeof Chat> = {
 		(Story) => {
 			const [chats, addMessageTo] = useChats(globalContext.chats);
 
-			const user = useContext(userContext);
+			const user = useUser();
 			return (
 				<div>
 					<Story

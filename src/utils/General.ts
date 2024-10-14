@@ -1,11 +1,6 @@
-export function sleep(ms: number) {
-	return new Promise((r) => setTimeout(r, ms));
+export function sleep(ms: number, canceler?: AbortController) {
+	return new Promise((r) => setTimeout(r, ms, { signal: canceler }));
 }
-
-export type EventHandler<T extends Function> = {
-	add: (callBack: T) => void;
-	remove: (callback: T) => void;
-};
 
 export function EventHandler<T extends Function>() {
 	const events: T[] = [];

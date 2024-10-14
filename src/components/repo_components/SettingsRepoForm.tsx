@@ -3,7 +3,6 @@ import { IconType } from "react-icons";
 import { BsFillQuestionCircleFill } from "react-icons/bs";
 import { languageContext } from "../../global/Language";
 import Switch from "react-switch";
-import { userContext } from "../../global/User";
 import { useGuardChanges } from "../../utils/react/hooks/UseGuardChanges";
 import { SettingsUI } from "../../Chore/Types";
 import { GuardChangesButtons } from "../reusables/GuardChangesButtons";
@@ -13,7 +12,6 @@ import { Separator } from "../app_style/Separator";
 import { Info } from "../app_style/Info";
 
 export function SettingsForm() {
-	const user = useContext(userContext);
 	const language = useContext(languageContext);
 	const theme = useContext(themeContext);
 

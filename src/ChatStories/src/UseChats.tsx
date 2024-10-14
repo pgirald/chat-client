@@ -1,8 +1,8 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { globalContext } from "../../tests/src/Context";
 import { ChatUI, MessageUI } from "../../Chore/Types";
-import { userContext } from "../../global/User";
 import { MessageData } from "../../components/chat/Chat";
+import { useUser } from "../../global/User";
 
 export function useChats(
 	initChats?: ChatUI[]
@@ -13,7 +13,7 @@ export function useChats(
 ] {
 	const [chats, setChats] = useState(initChats);
 
-	const user = useContext(userContext);
+	const user = useUser();
 
 	function addMessageTo(chatIdx: number, msgData: MessageData) {
 		if (!chats?.[chatIdx]) {

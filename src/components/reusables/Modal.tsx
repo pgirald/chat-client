@@ -17,6 +17,7 @@ export type ModalProps = {
 	reactModalProps?: Omit<ReactModal["props"], "children" | "isOpen">;
 	closeFrameProps?: Omit<CloseFrameProps, "children" | "onCloseRequested">;
 	children: ReactNode;
+	onCloseModal?: () => void;
 };
 
 export type ModalHandler = {
@@ -45,7 +46,7 @@ export const Modal = forwardRef(
 				backgroundColor: theme.bg,
 				margin: 0,
 				padding: 0,
-				maxHeight:"100%",
+				maxHeight: "100%",
 				...props.reactModalProps?.style?.content,
 			},
 		};
@@ -73,6 +74,7 @@ export const Modal = forwardRef(
 
 		function closeModal() {
 			setShow(false);
+			props.onCloseModal?.();
 		}
 	}
 );

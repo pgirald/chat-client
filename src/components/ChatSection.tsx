@@ -6,7 +6,7 @@ import { BiSolidPlusCircle } from "react-icons/bi";
 import { IoSearchSharp } from "react-icons/io5";
 import { languageContext } from "../global/Language";
 import { chatImg, chatLabel } from "../Chore/view";
-import { userContext } from "../global/User";
+import {  useUser } from "../global/User";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { ChatsList } from "./connections/ChatsList";
 import { Modal, ModalHandler } from "./reusables/Modal";
@@ -36,7 +36,7 @@ export type ChatSectionProps = {
 export function ChatSection(props: ChatSectionProps) {
 	const selectedIdxRef = useRef<number>();
 	const [selectedChat, setSelectedChat] = useState<ChatUI>();
-	const user = useContext(userContext);
+	const user = useUser();
 	const language = useContext(languageContext);
 	const chatModalRef = useRef<ModalHandler>(null);
 	const newChatModalRef = useRef<ModalHandler>(null);

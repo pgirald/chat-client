@@ -1,52 +1,110 @@
 import {
 	CSSProperties,
+	ReactNode,
 	useCallback,
 	useContext,
+	useEffect,
 	useRef,
 	useState,
 } from "react";
 import { ContactUI, UserUI } from "../../Chore/Types";
 import { fixedTheme } from "../../global/Theme";
 import profileImage from "../../assets/profile.png";
-import { userContext } from "../../global/User";
 import { languageContext } from "../../global/Language";
 import { BsDashLg } from "react-icons/bs";
 import { E, truncateStr } from "../../utils/StringOps";
-import { ProfileItem } from "./private/ProfileItem";
+import { FontProps, ProfileItem } from "./private/ProfileItem";
+import { useUser } from "../../global/User";
+import { sourceContext } from "../../global/Source";
+import { PulseLoader } from "react-spinners";
+import { InfiniteScroll } from "../../utils/react/components/InfiniteScroll";
+import { empty } from "../../utils/General";
 
 export type ContactsListProps = {
-	children: ContactUI[];
+	contacts?: ContactUI[];
+	infinite?: boolean;
 	className?: string;
 	onContactClicked?: (contact: ContactUI, idx: number) => void;
-	onRemoveRequested?: (contact: ContactUI) => void;
-	onSearchRequested?: (content: string) => void;
 	style?: CSSProperties;
-	selected?: number;
-	showRemove?: boolean;
-	removeSize?: number;
 	itemsHeight?: number;
+	pageNumber?: number;
+	itemsPerPage?: number;
+	font?: (contact: ContactUI) => FontProps;
+	contactWrapper?: (props: {
+		children: ReactNode;
+		contact: ContactUI;
+	}) => JSX.Element;
+	filterUsername?: string;
 };
 
+type PagInfo = { pageNumber: number; itemsCount: number };
+
 export function ContactsList(props: ContactsListProps) {
-	const cuser = useContext(userContext);
+	const source = useContext(sourceContext);
+	const cuser = useUser();
+
+	const pageInfoRef = useRef<PagInfo>({
+		pageNumber: props.pageNumber || 0,
+		itemsCount: props.itemsPerPage || 8,
+	});
+
+	const [contacts, setContacts] = useState<ContactUI[]>(props.contacts || []);
+	const [hasMore, setHasMore] = useState(true);
+
+	useEffect(() => {
+		props.contacts && setContacts(props.contacts);
+	}, [props.contacts]);
+
+	useEffect(() => {
+		if (!props.contacts) {
+			fetchContacts();
+		}
+	}, []);
+
+	useEffect(() => {
+		(async () => {
+			if (empty(props.filterUsername)) {
+				return;
+			}
+			setContacts([]);
+			setHasMore(true);
+			pageInfoRef.current.pageNumber = 0;
+			await fetchContacts();
+		})();
+	}, [props.filterUsername]);
+
+	async function fetchContacts() {
+		const newContacts = await source.getContacts(
+			pageInfoRef.current.pageNumber,
+			pageInfoRef.current.itemsCount,
+			props.filterUsername || undefined
+		);
+		setHasMore(newContacts.length !== 0);
+		setContacts([...contacts, ...newContacts]);
+		pageInfoRef.current.pageNumber++;
+	}
+
+	const emptyWrapper = ({ children }: { children: ReactNode }) => (
+		<>{children}</>
+	);
+
+	const ContactWrapper = props.contactWrapper || emptyWrapper;
 
 	return (
-		<div
-			className={`${E(props.className)} -:overflow-y-scroll -:p-0 -:m-0 -:space-y-1`}
+		<InfiniteScroll
+			className={props.className}
 			style={props.style}
+			loadMore={fetchContacts}
+			hasMore={hasMore}
+			active={empty(props.infinite) ? false : props.infinite}
+			loader={
+				<div className="w-full items-center">
+					<PulseLoader color={fixedTheme.logoBlue} />
+				</div>
+			}
 		>
-			{props.children.map((contact, idx) => (
-				<div className="flex-row space-x-2 items-center">
-					{props.showRemove && (
-						<BsDashLg
-							className="icon"
-							style={{ alignSelf: "center", backgroundColor: fixedTheme.red }}
-							color="white"
-							onClick={() => props.onRemoveRequested?.(contact)}
-							strokeWidth={5}
-							size={props.removeSize || 20}
-						/>
-					)}
+			{contacts.map((contact, idx) => (
+				<ContactWrapper contact={contact}>
 					<ContactItem
 						height={props.itemsHeight}
 						contact={contact}
@@ -54,10 +112,11 @@ export function ContactsList(props: ContactsListProps) {
 						onClick={() => {
 							props.onContactClicked?.(contact, idx);
 						}}
+						font={props.font?.(contact)}
 					/>
-				</div>
+				</ContactWrapper>
 			))}
-		</div>
+		</InfiniteScroll>
 	);
 }
 
@@ -66,6 +125,7 @@ export type ContactItemProps = {
 	contact: ContactUI;
 	height?: number;
 	onClick?: () => void;
+	font?: FontProps;
 };
 
 export function ContactItem({
@@ -73,6 +133,7 @@ export function ContactItem({
 	user,
 	onClick,
 	height,
+	font,
 }: ContactItemProps) {
 	const language = useContext(languageContext);
 
@@ -90,7 +151,8 @@ export function ContactItem({
 				onClick?.();
 			}}
 			height={height}
-			className="w-full p-1"
+			className="w-full p-1 text-inherit"
+			font={font}
 		/>
 	);
 }
