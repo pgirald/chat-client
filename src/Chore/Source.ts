@@ -15,12 +15,12 @@ export type Source = {
 		page: number,
 		count: number,
 		chatName?: string
-	) => Promise<ChatUI[]>;
+	) => Promise<[ChatUI[], boolean]>;
 	getContacts: (
 		page: number,
 		count: number,
 		contactName?: string
-	) => Promise<ContactUI[]>;
+	) => Promise<[ContactUI[], boolean]>;
 	getMyConfig: (canceler?: AbortController) => Promise<Settings | undefined>;
 	sendMessage: (
 		content: string,
@@ -37,12 +37,16 @@ export type Source = {
 export type Emitter = {
 	connect: () => void;
 	disconnect: () => void;
-	onConnectionStatusChanged: EventHandler<(online: boolean) => void>;
+	onConnectionStatusChanged: EventHandler<[boolean], (online: boolean) => void>;
 	onContactStatusChaged: EventHandler<
+		[ContactStatusData],
 		(contactStatus: ContactStatusData) => void
 	>;
-	onMessageReceived: EventHandler<(message: MessageUI, chatId: number) => void>;
-	onError: EventHandler<(error: Error) => void>;
+	onMessageReceived: EventHandler<
+		[MessageUI, number],
+		(message: MessageUI, chatId: number) => void
+	>;
+	onError: EventHandler<[Error], (error: Error) => void>;
 };
 
 export function Client(source: Source, user: User) {}

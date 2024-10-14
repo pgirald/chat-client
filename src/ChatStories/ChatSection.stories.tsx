@@ -26,9 +26,7 @@ export const Chatting: StoryObj<typeof ChatSection> = {
 		(Story, { args }) => {
 			const [chats, addMessageTo] = useChats(globalContext.chats);
 
-			return (
-				<Story args={{ ...args, onMessage: onMessage, children: chats }} />
-			);
+			return <Story args={{ ...args, onMessage: onMessage }} />;
 
 			function onMessage(e: ChatMessageData) {
 				addMessageTo(e.idx, e.msg);

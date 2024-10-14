@@ -41,7 +41,7 @@ function getFakeViews(): FViews {
 }
 
 //Milliseconds
-const sleepTime = 500;
+const sleepTime = 1500;
 
 export type MockSource = Source & {
 	_authenticate: (email: string, password: string) => void;
@@ -74,39 +74,34 @@ export function MockServer(): Source {
 			await sleep(sleepTime);
 			this._authenticate(email, password);
 		},
-		async getMyChats(page, count, chatName?): Promise<ChatUI[]> {
+		async getMyChats(page, count, chatName?) {
 			await sleep(sleepTime);
 			if (page < 0) {
 				throw new InvalidParamsError("'page' parameter has an invalid value");
 			}
 			const start = page * count;
 			const end = start + count;
-			return deepCopy(
-				chats
-					.filter((chat) =>
-						chatLabel(chat, globalContext.user, globalContext.language)
-							.toLowerCase()
-							.includes(chatName?.toLowerCase() || "")
-					)
-					.slice(start, end)
+			const filtered = chats.filter((chat) =>
+				chatLabel(chat, globalContext.user, globalContext.language)
+					.toLowerCase()
+					.includes(chatName?.toLowerCase() || "")
 			);
+			const dataPage = deepCopy(filtered.slice(start, end));
+
+			return [dataPage, filtered.at(end) !== undefined];
 		},
-		async getContacts(page, count, username?): Promise<ContactUI[]> {
+		async getContacts(page, count, username?) {
 			await sleep(sleepTime);
 			if (page < 0) {
 				throw new InvalidParamsError("'page' parameter has an invalid value");
 			}
 			const start = page * count;
 			const end = start + count;
-			return deepCopy(
-				contacts
-					.filter((contact) =>
-						contact.username
-							.toLowerCase()
-							.includes(username?.toLowerCase() || "")
-					)
-					.slice(start, end)
+			const filtered = contacts.filter((contact) =>
+				contact.username.toLowerCase().includes(username?.toLowerCase() || "")
 			);
+			const dataPage = deepCopy(filtered.slice(start, end));
+			return [dataPage, filtered.at(end) !== undefined];
 		},
 		async getMyConfig(canceler?): Promise<SettingsUI | undefined> {
 			await sleep(sleepTime, canceler);
@@ -179,7 +174,7 @@ const reviver = (key: any, value: any) => {
 	return value; // Return other values unchanged
 };
 
-function deepCopy(obj: Object) {
+function deepCopy<T extends Object>(obj: T): T {
 	return JSON.parse(JSON.stringify(obj), reviver);
 }
 

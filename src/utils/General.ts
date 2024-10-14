@@ -2,7 +2,7 @@ export function sleep(ms: number, canceler?: AbortController) {
 	return new Promise((r) => setTimeout(r, ms, { signal: canceler }));
 }
 
-export function EventHandler<T extends Function>() {
+export function EventHandler<P extends any[], T extends (...args: P) => any>() {
 	const events: T[] = [];
 	return {
 		add(callBack: T) {
@@ -14,6 +14,11 @@ export function EventHandler<T extends Function>() {
 				events.splice(idx, 1);
 			}
 			return events;
+		},
+		trigger(params?: P) {
+			for (const event of events) {
+				event(...(params || ([] as any)));
+			}
 		},
 	};
 }

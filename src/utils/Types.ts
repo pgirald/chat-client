@@ -1,4 +1,5 @@
 import { CSSProperties } from "react";
+import { EventHandler } from "./General";
 
 export type StyleSheet = {
 	readonly [index: string]: CSSProperties;
@@ -14,7 +15,7 @@ export type Replace<T, K extends keyof T, TReplace> = Omit<T, K> & {
 	[P in K]: TReplace;
 };
 
-export type EventHandler<T extends Function> = {
-	add: (callBack: T) => void;
-	remove: (callback: T) => void;
-};
+export type EventHandler<
+	P extends any[],
+	T extends (...args: P) => any,
+> = ReturnType<typeof EventHandler<P, T>>;

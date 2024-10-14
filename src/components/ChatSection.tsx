@@ -1,12 +1,12 @@
 import { CSSProperties, useContext, useRef, useState } from "react";
 import { User } from "chat-api";
 import { ChatUI } from "../Chore/Types";
-import {  themeContext } from "../global/Theme";
+import { themeContext } from "../global/Theme";
 import { BiSolidPlusCircle } from "react-icons/bi";
 import { IoSearchSharp } from "react-icons/io5";
 import { languageContext } from "../global/Language";
 import { chatImg, chatLabel } from "../Chore/view";
-import {  useUser } from "../global/User";
+import { useUser } from "../global/User";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { ChatsList } from "./connections/ChatsList";
 import { Modal, ModalHandler } from "./reusables/Modal";
@@ -16,6 +16,10 @@ import { BsPlus } from "react-icons/bs";
 import { Chat, MessageData } from "./chat/Chat";
 import { Label, WindowHeader } from "./app_style/Template";
 import { SearchTool } from "./app_style/SearchTool";
+import { sourceContext } from "../global/Source";
+import { usePromiseAwaiter } from "../global/Loading";
+import { useChats } from "../global/Chats";
+import { empty } from "../utils/General";
 
 export type ChatMessageData = {
 	msg: MessageData;
@@ -24,7 +28,6 @@ export type ChatMessageData = {
 };
 
 export type ChatSectionProps = {
-	children: ChatUI[];
 	userListClass?: string;
 	userConnected: boolean;
 	className?: string;
@@ -34,10 +37,16 @@ export type ChatSectionProps = {
 };
 
 export function ChatSection(props: ChatSectionProps) {
-	const selectedIdxRef = useRef<number>();
-	const [selectedChat, setSelectedChat] = useState<ChatUI>();
+	const [selectedIdx, setSelectedIdx] = useState<number>(-1);
 	const user = useUser();
 	const language = useContext(languageContext);
+	const source = useContext(sourceContext);
+	const [chats, setChats] = useChats();
+	const updateChatAwaiter = usePromiseAwaiter(
+		(controller?, params?: { chat: ChatUI }) =>
+			source.updateChat(params!.chat, controller),
+		true
+	);
 	const chatModalRef = useRef<ModalHandler>(null);
 	const newChatModalRef = useRef<ModalHandler>(null);
 	const theme = useContext(themeContext);
@@ -78,13 +87,12 @@ export function ChatSection(props: ChatSectionProps) {
 					<ChatsList
 						className="space-y-2 overflow-y-scroll h-5/6 w-full"
 						onChatSelected={(chat, idx) => {
-							setSelectedChat(chat);
-							selectedIdxRef.current = idx;
+							setSelectedIdx(idx);
 							props.onChatSelected?.(chat, idx);
 						}}
-						selected={selectedIdxRef.current}
+						selected={selectedIdx === -1 ? undefined : selectedIdx}
 					>
-						{props.children}
+						{chats}
 					</ChatsList>
 				</div>
 				<div className="h-full w-[70%]">
@@ -92,10 +100,15 @@ export function ChatSection(props: ChatSectionProps) {
 						className="w-full flex-row justify-start items-center space-x-2 h-1/5"
 						style={{ color: theme.content, backgroundColor: theme.bg }}
 					>
-						{selectedChat && (
+						{selectedIdx !== -1 && (
 							<>
-								<EditableImg src={chatImg(selectedChat, user)} size={70} />
-								<Label content={chatLabel(selectedChat, user, language)} />
+								<EditableImg
+									src={chatImg(chats[selectedIdx], user)}
+									size={70}
+								/>
+								<Label
+									content={chatLabel(chats[selectedIdx], user, language)}
+								/>
 								<div className="flex-row w-full h-fit justify-end">
 									<IoSearchSharp className="cursor-pointer" size={iconsSize} />
 									<HiOutlineDotsVertical
@@ -111,13 +124,13 @@ export function ChatSection(props: ChatSectionProps) {
 					</div>
 					<Chat
 						className="h-5/6 w-full"
-						chat={selectedChat}
+						chat={selectedIdx === -1 ? undefined : chats[selectedIdx]}
 						onMessage={(msgData) => {
-							const chat = selectedChat!;
+							const chat = chats[selectedIdx];
 							props.onMessage?.({
 								msg: msgData,
 								selectedChat: chat,
-								idx: selectedIdxRef.current!,
+								idx: selectedIdx,
 							});
 						}}
 					/>
@@ -133,9 +146,18 @@ export function ChatSection(props: ChatSectionProps) {
 					}}
 				/>
 			</Modal>
-			{selectedChat && (
+			{selectedIdx !== -1 && (
 				<Modal ref={chatModalRef}>
-					<ChatForm chat={selectedChat} />
+					<ChatForm
+						chat={chats[selectedIdx]}
+						onConfirm={async (chat) => {
+							const updatedChat = await updateChatAwaiter({ chat: chat });
+							if (updatedChat) {
+								chats[selectedIdx] = updatedChat;
+								setChats([...chats]);
+							}
+						}}
+					/>
 				</Modal>
 			)}
 		</div>

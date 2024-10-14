@@ -4,12 +4,8 @@ import { ContactItem, ContactsList } from "../connections/ContactsList";
 import { chatLabel } from "../../Chore/view";
 import { languageContext } from "../../global/Language";
 import profileImg from "../../assets/chat_default.png";
-import { FaEdit } from "react-icons/fa";
 import { fixedTheme, themeContext } from "../../global/Theme";
-import { MdCancel } from "react-icons/md";
 import { CgArrowsExchange } from "react-icons/cg";
-import { BiSolidPlusCircle } from "react-icons/bi";
-import { RxCross2 } from "react-icons/rx";
 import { Modal, ModalHandler } from "../reusables/Modal";
 import { ContactForm } from "./ContactRepoForm";
 import { EditableImg } from "../reusables/EditableImg";
@@ -17,7 +13,7 @@ import { AppButton } from "../app_style/AppButton";
 import { useGuardChanges } from "../../utils/react/hooks/UseGuardChanges";
 import { GuardChangesButtons } from "../reusables/GuardChangesButtons";
 import { AppInput } from "../app_style/AppInput";
-import { BsDashLg, BsPlus } from "react-icons/bs";
+import { BsDashLg } from "react-icons/bs";
 import { WindowTemplate } from "../app_style/Template";
 import { truncateStr } from "../../utils/StringOps";
 import { Header, Info } from "../app_style/Info";
@@ -250,8 +246,8 @@ export function ChatForm(props: ChatFormProps) {
 		return (
 			<WindowTemplate header={language.addMembers} wrapperClassName="space-y-5">
 				<div className="flex-row h-96">
-					<div className="h-full space-y-2">
-						<Header className="h-[10%]" content={language.allContacts} />
+					<div className="h-full">
+						<Header className="h-[10%]" content={language.allUsers} />
 						<div className="h-full">
 							<SearchTool
 								className="h-[10%] rounded-tl-md"
@@ -306,7 +302,12 @@ export function ChatForm(props: ChatFormProps) {
 											}}
 										>
 											{props.children}
-											<input type="checkbox" checked={selected} readOnly />
+											<input
+												className="cursor-pointer"
+												type="checkbox"
+												checked={selected}
+												readOnly
+											/>
 										</div>
 									);
 								}}
@@ -314,31 +315,33 @@ export function ChatForm(props: ChatFormProps) {
 						</div>
 					</div>
 					<Separator />
-					<div className="space-y-2">
-						<Header content={language.selected} />
-						<ContactsList
-							className="pr-2"
-							style={{ width: contactsWidth }}
-							contacts={selectedMembers}
-							contactWrapper={(props) => (
-								<ContactWrapper
-									contact={props.contact}
-									onRemoveRequested={(contact) => {
-										if (contact.id === chat.owner.id) {
-											alert(language.removeOwnerWarning);
-											return;
-										}
-										setSelectedMembers(
-											selectedMembers.filter(
-												(member) => member.id !== contact.id
-											)
-										);
-									}}
-								>
-									{props.children}
-								</ContactWrapper>
-							)}
-						/>
+					<div className="h-full justify-start">
+						<Header className="h-[10%]" content={language.selected} />
+						<div className="h-full">
+							<ContactsList
+								className="pr-2 h-[90%]"
+								style={{ width: contactsWidth }}
+								contacts={selectedMembers}
+								contactWrapper={(props) => (
+									<ContactWrapper
+										contact={props.contact}
+										onRemoveRequested={(contact) => {
+											if (contact.id === chat.owner.id) {
+												alert(language.removeOwnerWarning);
+												return;
+											}
+											setSelectedMembers(
+												selectedMembers.filter(
+													(member) => member.id !== contact.id
+												)
+											);
+										}}
+									>
+										{props.children}
+									</ContactWrapper>
+								)}
+							/>
+						</div>
 					</div>
 				</div>
 				<AppButton

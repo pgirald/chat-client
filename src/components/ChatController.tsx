@@ -9,6 +9,7 @@ import { sourceContext } from "../global/Source";
 import { range } from "../utils/objectOps";
 import { useUser } from "../global/User";
 import { useLoading } from "../global/Loading";
+import { useChats } from "../global/Chats";
 
 type _User = {
 	userID: string;
@@ -66,10 +67,10 @@ type ActionData<T> = T extends "Add"
 // 	return next;
 // }
 
-export function ChatPage(props: ChatPageProps) {
+export function ChatController(props: ChatPageProps) {
 	const [setLoading] = useLoading();
 	const [isConnected, setIsConnected] = useState<boolean>(false);
-	const [chats, setChats] = useState<ChatUI[]>([]);
+	const [chats, setChats] = useChats();
 	const chatsRef = useRef(chats);
 	const user = useUser();
 	const source = useContext(sourceContext);
@@ -94,9 +95,7 @@ export function ChatPage(props: ChatPageProps) {
 			userConnected={isConnected}
 			onMessage={onMessage}
 			className="h-full w-full"
-		>
-			{chats}
-		</ChatSection>
+		/>
 	);
 
 	async function onMessage(e: ChatMessageData) {

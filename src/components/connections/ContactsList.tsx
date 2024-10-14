@@ -19,6 +19,7 @@ import { sourceContext } from "../../global/Source";
 import { PulseLoader } from "react-spinners";
 import { InfiniteScroll } from "../../utils/react/components/InfiniteScroll";
 import { empty } from "../../utils/General";
+import { ListLoader } from "../app_style/ListLoader";
 
 export type ContactsListProps = {
 	contacts?: ContactUI[];
@@ -57,7 +58,7 @@ export function ContactsList(props: ContactsListProps) {
 
 	useEffect(() => {
 		if (!props.contacts) {
-			fetchContacts();
+			fetchContacts([]);
 		}
 	}, []);
 
@@ -69,17 +70,18 @@ export function ContactsList(props: ContactsListProps) {
 			setContacts([]);
 			setHasMore(true);
 			pageInfoRef.current.pageNumber = 0;
-			await fetchContacts();
+			await fetchContacts([]);
 		})();
 	}, [props.filterUsername]);
 
-	async function fetchContacts() {
-		const newContacts = await source.getContacts(
+	async function fetchContacts(contacts: ContactUI[]) {
+		const [newContacts, more] = await source.getContacts(
 			pageInfoRef.current.pageNumber,
 			pageInfoRef.current.itemsCount,
 			props.filterUsername || undefined
 		);
-		setHasMore(newContacts.length !== 0);
+		console.log(newContacts);
+		setHasMore(more);
 		setContacts([...contacts, ...newContacts]);
 		pageInfoRef.current.pageNumber++;
 	}
@@ -94,14 +96,10 @@ export function ContactsList(props: ContactsListProps) {
 		<InfiniteScroll
 			className={props.className}
 			style={props.style}
-			loadMore={fetchContacts}
+			loadMore={() => fetchContacts(contacts)}
 			hasMore={hasMore}
 			active={empty(props.infinite) ? false : props.infinite}
-			loader={
-				<div className="w-full items-center">
-					<PulseLoader color={fixedTheme.logoBlue} />
-				</div>
-			}
+			loader={<ListLoader />}
 		>
 			{contacts.map((contact, idx) => (
 				<ContactWrapper contact={contact}>

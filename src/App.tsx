@@ -7,14 +7,14 @@ import { Layout } from "./components/Layout";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { BsPersonFill } from "react-icons/bs";
 import { themeContext } from "./global/Theme";
-import { ChatPage } from "./components/ChatController";
+import { ChatController } from "./components/ChatController";
 import { MockServer } from "./tests/src/Mocks";
 import { sourceContext } from "./global/Source";
 
 function App() {
 	const source = useContext(sourceContext);
 
-	return <Layout>{source.authenticated && <ChatPage />}</Layout>;
+	return <Layout>{source.authenticated && <ChatController />}</Layout>;
 }
 
 export default App;
