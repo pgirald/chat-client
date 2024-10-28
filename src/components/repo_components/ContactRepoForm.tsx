@@ -1,6 +1,5 @@
-import { ForwardedRef, forwardRef, useContext, useState } from "react";
-import { UserUI } from "../../Chore/Types";
-import { Modal, ModalHandler } from "../reusables/Modal";
+import { useContext, useRef } from "react";
+import { ContactUI } from "../../Chore/Types";
 import { fixedTheme, themeContext } from "../../global/Theme";
 import profileImg from "../../assets/profile.png";
 import { languageContext } from "../../global/Language";
@@ -14,26 +13,40 @@ import { WindowTemplate } from "../app_style/Template";
 import { Separator } from "../app_style/Separator";
 import { Info } from "../app_style/Info";
 import { useUser } from "../../global/User";
+import { useChatsStore } from "../../global/Chats";
+import { usePromiseAwaiter } from "../../global/Loading";
+import { sourceContext } from "../../global/Source";
 
-export type ContactFormProps = { contact: UserUI };
+export type ContactFormProps = {
+	contact: ContactUI;
+};
 
 export function ContactForm(props: ContactFormProps) {
 	const theme = useContext(themeContext);
 	const language = useContext(languageContext);
 	const user = useUser();
+	const source = useContext(sourceContext);
 
-	const [contact, setContact, discard, newChanges] = useGuardChanges(
-		props.contact
+	const initialContactRef = useRef<ContactUI>(props.contact);
+
+	const updateContactDependents = useChatsStore(
+		(store) => store.updateContactDependents
 	);
 
-	const imgSize = 80;
+	const updateOwnerAwaiter = usePromiseAwaiter(
+		(controller?, params?: { owner: ContactUI }) =>
+			source.updateMyInfo(params!.owner, controller),
+		true
+	);
+
+	const [contact, setContact, discard, newChanges] = useGuardChanges(
+		initialContactRef.current
+	);
+
 	const isCurrentUser = user.id === props.contact.id;
 
 	return (
-		<WindowTemplate
-			wrapperClassName="space-y-5"
-			header={props.contact.username}
-		>
+		<WindowTemplate wrapperClassName="space-y-5" header={contact.username}>
 			<div className="flex-row items-end h-64">
 				<div className="space-y-1">
 					{!isCurrentUser && (
@@ -53,7 +66,7 @@ export function ContactForm(props: ContactFormProps) {
 						style={{ backgroundColor: theme.breaker }}
 					>
 						<EditableImg
-							src={props.contact.img || profileImg}
+							src={contact.img || profileImg}
 							size={80}
 							canChange={isCurrentUser}
 						/>
@@ -150,8 +163,12 @@ export function ContactForm(props: ContactFormProps) {
 			{newChanges && (
 				<GuardChangesButtons
 					onDiscardRequested={discard}
-					onConfirmRequested={() => {
-						alert("Confirmed");
+					onConfirmRequested={async () => {
+						const updatedOwner = await updateOwnerAwaiter({ owner: contact });
+						if (updatedOwner) {
+							updateContactDependents(updatedOwner);
+							initialContactRef.current = updatedOwner;
+						}
 					}}
 				/>
 			)}

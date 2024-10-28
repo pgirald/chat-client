@@ -30,6 +30,7 @@ export const Modal = forwardRef(
 		const [show, setShow] = useState(false);
 		const theme = useContext(themeContext);
 
+		//TODO: is this necessary??  
 		useEffect(() => {
 			ReactModal.setAppElement("body");
 		}, []);

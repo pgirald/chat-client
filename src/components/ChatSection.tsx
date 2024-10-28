@@ -18,8 +18,9 @@ import { Label, WindowHeader } from "./app_style/Template";
 import { SearchTool } from "./app_style/SearchTool";
 import { sourceContext } from "../global/Source";
 import { usePromiseAwaiter } from "../global/Loading";
-import { useChats } from "../global/Chats";
-import { empty } from "../utils/General";
+import { unspecified } from "../utils/General";
+import { useStore } from "zustand";
+import { useChatsStore } from "../global/Chats";
 
 export type ChatMessageData = {
 	msg: MessageData;
@@ -32,16 +33,15 @@ export type ChatSectionProps = {
 	userConnected: boolean;
 	className?: string;
 	style?: CSSProperties;
-	onMessage?: (e: ChatMessageData) => void;
-	onChatSelected?: (chat: ChatUI, idx: number) => void;
 };
 
 export function ChatSection(props: ChatSectionProps) {
-	const [selectedIdx, setSelectedIdx] = useState<number>(-1);
 	const user = useUser();
 	const language = useContext(languageContext);
 	const source = useContext(sourceContext);
-	const [chats, setChats] = useChats();
+	const updateSelectedChat = useChatsStore((store) => store.updateSelectedChat);
+	const selectedChat = useChatsStore((store) => store.selectedChat);
+	const setSelectedChat = useChatsStore((store) => store.setSelectedChat);
 	const updateChatAwaiter = usePromiseAwaiter(
 		(controller?, params?: { chat: ChatUI }) =>
 			source.updateChat(params!.chat, controller),
@@ -85,30 +85,23 @@ export function ChatSection(props: ChatSectionProps) {
 						</div>
 					</div>
 					<ChatsList
-						className="space-y-2 overflow-y-scroll h-5/6 w-full"
-						onChatSelected={(chat, idx) => {
-							setSelectedIdx(idx);
-							props.onChatSelected?.(chat, idx);
+						className="h-5/6 w-full"
+						onChatSelected={(chat) => {
+							setSelectedChat(chat.id);
 						}}
-						selected={selectedIdx === -1 ? undefined : selectedIdx}
-					>
-						{chats}
-					</ChatsList>
+						selected={selectedChat?.id}
+						infinite={true}
+					/>
 				</div>
 				<div className="h-full w-[70%]">
 					<div
 						className="w-full flex-row justify-start items-center space-x-2 h-1/5"
 						style={{ color: theme.content, backgroundColor: theme.bg }}
 					>
-						{selectedIdx !== -1 && (
+						{selectedChat && (
 							<>
-								<EditableImg
-									src={chatImg(chats[selectedIdx], user)}
-									size={70}
-								/>
-								<Label
-									content={chatLabel(chats[selectedIdx], user, language)}
-								/>
+								<EditableImg src={chatImg(selectedChat, user)} size={70} />
+								<Label content={chatLabel(selectedChat, user, language)} />
 								<div className="flex-row w-full h-fit justify-end">
 									<IoSearchSharp className="cursor-pointer" size={iconsSize} />
 									<HiOutlineDotsVertical
@@ -122,18 +115,7 @@ export function ChatSection(props: ChatSectionProps) {
 							</>
 						)}
 					</div>
-					<Chat
-						className="h-5/6 w-full"
-						chat={selectedIdx === -1 ? undefined : chats[selectedIdx]}
-						onMessage={(msgData) => {
-							const chat = chats[selectedIdx];
-							props.onMessage?.({
-								msg: msgData,
-								selectedChat: chat,
-								idx: selectedIdx,
-							});
-						}}
-					/>
+					<Chat className="h-5/6 w-full" />
 				</div>
 			</div>
 			<Modal ref={newChatModalRef}>
@@ -146,15 +128,14 @@ export function ChatSection(props: ChatSectionProps) {
 					}}
 				/>
 			</Modal>
-			{selectedIdx !== -1 && (
+			{selectedChat && (
 				<Modal ref={chatModalRef}>
 					<ChatForm
-						chat={chats[selectedIdx]}
+						chat={selectedChat}
 						onConfirm={async (chat) => {
 							const updatedChat = await updateChatAwaiter({ chat: chat });
 							if (updatedChat) {
-								chats[selectedIdx] = updatedChat;
-								setChats([...chats]);
+								updateSelectedChat(updatedChat);
 							}
 						}}
 					/>

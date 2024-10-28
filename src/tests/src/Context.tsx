@@ -18,7 +18,6 @@ import { ReactNode, useRef, useState } from "react";
 import { object } from "prop-types";
 import { sourceContext } from "../../global/Source";
 import { GlobalLoading } from "../../global/Loading";
-import { ChatsProvider } from "../../global/Chats";
 
 export const globalContext = Context(light, english, 0);
 
@@ -58,9 +57,7 @@ export function Context(theme: Theme, language: Language, userIdx: number) {
 			<sourceContext.Provider value={sourceRef.current}>
 				<themeContext.Provider value={_theme}>
 					<languageContext.Provider value={_language}>
-						<ChatsProvider>
 							<GlobalLoading language={_language}>{children}</GlobalLoading>
-						</ChatsProvider>
 					</languageContext.Provider>
 				</themeContext.Provider>
 			</sourceContext.Provider>

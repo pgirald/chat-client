@@ -23,6 +23,6 @@ export function EventHandler<P extends any[], T extends (...args: P) => any>() {
 	};
 }
 
-export function empty(value: any) {
+export function unspecified(value: any) {
 	return value === null || value === undefined;
 }

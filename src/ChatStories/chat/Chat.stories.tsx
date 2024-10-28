@@ -1,8 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react/*";
 import "../index.css";
 import { globalContext } from "../../tests/src/Context";
-import { useContext, useEffect, useRef, useState } from "react";
-import { MessageUI } from "../../Chore/Types";
 import { useChats } from "../src/UseChats";
 import { Chat } from "../../components/chat/Chat";
 import { useUser } from "../../global/User";
@@ -21,8 +19,6 @@ export const Sending: StoryObj<typeof Chat> = {
 				<div>
 					<Story
 						args={{
-							chat: chats?.[0],
-							onMessage: (msg) => addMessageTo(0, msg),
 							className: "h-[100vh] w-[40%] ",
 						}}
 					/>

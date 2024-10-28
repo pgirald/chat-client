@@ -17,12 +17,14 @@ import { InvalidParamsError } from "../../utils/objectOps";
 import { chatLabel } from "../../Chore/view";
 import { globalContext } from "./Context";
 
-export type FViews = {
+type Fview = {
 	user: UserUI;
 	settings?: SettingsUI;
 	chats: ChatUI[];
 	contacts: ContactUI[];
-}[];
+};
+
+export type FViews = Fview[];
 
 export const fakeViews = getFakeViews();
 
@@ -53,12 +55,14 @@ export function MockServer(): Source {
 	let chats: ChatUI[];
 	let settings: SettingsUI | undefined;
 	let authenticated = false;
+	let userData: Fview;
 	return {
 		_authenticate(email, password) {
-			const userData = fakeViews.find((fv) => fv.user.email === email);
-			if (!userData) {
+			const foundData = fakeViews.find((fv) => fv.user.email === email);
+			if (!foundData) {
 				throw new InvalidParamsError("The given email is not registered");
 			}
+			userData = foundData;
 			consumer = {
 				...userData.user,
 				blocked: false,
@@ -142,6 +146,20 @@ export function MockServer(): Source {
 			}
 			chats[idx] = { ...chats[idx], ...deepCopy(chat) };
 			return deepCopy(chats[idx]);
+		},
+		async updateMyInfo(newInfo, canceler?) {
+			await sleep(sleepTime, canceler);
+			if (canceler?.signal.aborted) {
+				return;
+			}
+			if (newInfo.id !== consumer.id) {
+				throw Error(
+					`The ID of ${newInfo.id} given with user information is not valid`
+				);
+			}
+			consumer = newInfo;
+			Object.assign(userData.user, newInfo);
+			return deepCopy(consumer);
 		},
 		async createChat(chat, canceler?) {
 			await sleep(sleepTime, canceler);

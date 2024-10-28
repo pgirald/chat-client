@@ -28,7 +28,8 @@
     "tailwindcss-unimportant": "^2.1.1",
     "ts-loader": "^9.5.1",
     "typescript": "^4.9.5",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "zustand": "^5.0.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",

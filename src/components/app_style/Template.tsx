@@ -1,6 +1,6 @@
 import { CSSProperties, ReactNode, useContext } from "react";
 import { fixedTheme, themeContext } from "../../global/Theme";
-import { empty } from "../../utils/General";
+import { unspecified } from "../../utils/General";
 import { E } from "../../utils/StringOps";
 
 export type LabelProps = {
@@ -57,7 +57,7 @@ export type WindowTemplateProps = {
 
 export function WindowTemplate(props: WindowTemplateProps) {
 	const fringeLenght = props.fringeLenght || 32;
-	const identation = empty(props.identation) ? fringeLenght : props.identation;
+	const identation = unspecified(props.identation) ? fringeLenght : props.identation;
 
 	return (
 		<div className={`-:pr-5 -:pb-5 ${props.className}`}>

@@ -21,6 +21,8 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ContactForm } from "./repo_components/ContactRepoForm";
 import { Logo } from "./app_style/Logo";
 import { useUser } from "../global/User";
+import { useStore } from "zustand";
+import { useChatsStore} from "../global/Chats";
 
 export type LayoutProps = {
 	children: ReactNode;
@@ -29,7 +31,7 @@ export type LayoutProps = {
 export const layoutPaddings = { left: 50, right: 10 };
 
 export function Layout(props: LayoutProps) {
-	const user = useUser()
+	const user = useUser();
 	const theme = useContext(themeContext);
 	const language = useContext(languageContext);
 
@@ -189,7 +191,9 @@ export function Layout(props: LayoutProps) {
 				<PrivilegesForm />
 			</Modal>
 			<Modal ref={userModalRef}>
-				<ContactForm contact={user} />
+				<ContactForm
+					contact={user}
+				/>
 			</Modal>
 		</div>
 	);

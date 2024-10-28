@@ -36,6 +36,7 @@ export function MessagePanel(props: MessagePanelProps) {
 		scrollToBottom(panelRef.current);
 	}, [props.messages]);
 
+	//TODO: Incorrect logic!!!
 	useEffect(() => {
 		const newMsgs = props.messages.length > msgsCountRef.current;
 		if (newMsgs && wasAtBottomRef.current) {

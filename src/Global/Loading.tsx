@@ -10,7 +10,7 @@ import { PulseLoader } from "react-spinners";
 import { fixedTheme } from "./Theme";
 import { AppButton } from "../components/app_style/AppButton";
 import { Language } from "./Language";
-import { empty, EventHandler } from "../utils/General";
+import { unspecified, EventHandler } from "../utils/General";
 import { EventHandler as TEventHandler } from "../utils/Types";
 
 const LoadingContext = createContext<
@@ -34,7 +34,7 @@ export function GlobalLoading({
 
 	function setLoading(loading: boolean, cancel?: boolean) {
 		_setLoading(loading);
-		if (!empty(cancel)) {
+		if (!unspecified(cancel)) {
 			setShowCancel(cancel!);
 		}
 	}
@@ -64,8 +64,8 @@ export function GlobalLoading({
 	);
 }
 
-export function usePromiseAwaiter<P extends object>(
-	callback: (controller?: AbortController, params?: P) => Promise<any>,
+export function usePromiseAwaiter<P extends object, T extends any>(
+	callback: (controller?: AbortController, params?: P) => Promise<T>,
 	canceleable?: boolean
 ) {
 	const [setLoading, _, cancelHandler] = useLoading();

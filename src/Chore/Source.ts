@@ -27,8 +27,18 @@ export type Source = {
 		attachments: AttachmentUI[],
 		chat: ChatUI
 	) => Promise<MessageUI>;
-	updateChat: (chat: ChatUI, canceler?: AbortController) => Promise<void>;
-	createChat: (chat: ChatUI, canceler?: AbortController) => Promise<void>;
+	updateChat: (
+		chat: ChatUI,
+		canceler?: AbortController
+	) => Promise<ChatUI | undefined>;
+	createChat: (
+		chat: ChatUI,
+		canceler?: AbortController
+	) => Promise<ChatUI | undefined>;
+	updateMyInfo: (
+		newInfo: ContactUI,
+		canceler?: AbortController
+	) => Promise<ContactUI | undefined>;
 	user: ContactUI;
 	authenticated: boolean;
 	emitter: Emitter;

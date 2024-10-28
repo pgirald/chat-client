@@ -7,14 +7,19 @@ import { Layout } from "./components/Layout";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { BsPersonFill } from "react-icons/bs";
 import { themeContext } from "./global/Theme";
-import { ChatController } from "./components/ChatController";
 import { MockServer } from "./tests/src/Mocks";
 import { sourceContext } from "./global/Source";
+import { useChatListener } from "./components/UseChatListener";
 
 function App() {
+	const connectionStatus = useChatListener();
 	const source = useContext(sourceContext);
 
-	return <Layout>{source.authenticated && <ChatController />}</Layout>;
+	return (
+		<Layout>
+			{source.authenticated && <ChatSection className="h-full w-full" userConnected={connectionStatus} />}
+		</Layout>
+	);
 }
 
 export default App;

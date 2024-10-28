@@ -6,7 +6,7 @@ import {
 	useRef,
 } from "react";
 import { scrolledToBottom } from "../../HTML_native";
-import { empty } from "../../General";
+import { unspecified } from "../../General";
 
 export type InfiniteScrollProps = {
 	className?: string;
@@ -22,7 +22,7 @@ export const InfiniteScroll = forwardRef(
 	(props: InfiniteScrollProps, ref?: ForwardedRef<HTMLDivElement>) => {
 		const loadingRef = useRef(false);
 
-		const active = empty(props.active) ? true : props.active;
+		const active = unspecified(props.active) ? true : props.active;
 
 		return (
 			<div

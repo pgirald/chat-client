@@ -12,7 +12,7 @@ import Picker from "@emoji-mart/react";
 import { setNativeValue } from "../../HTML_native";
 import smile from "../../../assets/smile.svg";
 import { CloseFrame } from "../../../components/reusables/CloseFrame";
-import { empty } from "../../General";
+import { unspecified } from "../../General";
 import { E } from "../../StringOps";
 
 type InputSelection = { start?: number; end?: number };
@@ -126,7 +126,7 @@ export function EmojisButton(props: EmojisButtonProps) {
 								const start = selectionRef.current.start;
 								const end = selectionRef.current.end;
 
-								if (empty(start) || empty(end)) {
+								if (unspecified(start) || unspecified(end)) {
 									return;
 								}
 

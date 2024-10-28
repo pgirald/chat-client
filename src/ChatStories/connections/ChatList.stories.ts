@@ -18,7 +18,7 @@ export default meta;
 
 export const Sending: StoryObj<typeof ChatsList> = {
 	args: {
-		children: globalContext.chats,
+		chats: globalContext.chats,
 		onChatSelected: printSelected,
 		className: "w-[220px]",
 	},

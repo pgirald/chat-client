@@ -18,8 +18,9 @@ import { useUser } from "../../global/User";
 import { sourceContext } from "../../global/Source";
 import { PulseLoader } from "react-spinners";
 import { InfiniteScroll } from "../../utils/react/components/InfiniteScroll";
-import { empty } from "../../utils/General";
+import { unspecified } from "../../utils/General";
 import { ListLoader } from "../app_style/ListLoader";
+import { usePagination } from "../../utils/react/hooks/UsePagination";
 
 export type ContactsListProps = {
 	contacts?: ContactUI[];
@@ -38,53 +39,16 @@ export type ContactsListProps = {
 	filterUsername?: string;
 };
 
-type PagInfo = { pageNumber: number; itemsCount: number };
-
 export function ContactsList(props: ContactsListProps) {
 	const source = useContext(sourceContext);
 	const cuser = useUser();
-
-	const pageInfoRef = useRef<PagInfo>({
-		pageNumber: props.pageNumber || 0,
-		itemsCount: props.itemsPerPage || 8,
-	});
-
-	const [contacts, setContacts] = useState<ContactUI[]>(props.contacts || []);
-	const [hasMore, setHasMore] = useState(true);
-
-	useEffect(() => {
-		props.contacts && setContacts(props.contacts);
-	}, [props.contacts]);
-
-	useEffect(() => {
-		if (!props.contacts) {
-			fetchContacts([]);
-		}
-	}, []);
-
-	useEffect(() => {
-		(async () => {
-			if (empty(props.filterUsername)) {
-				return;
-			}
-			setContacts([]);
-			setHasMore(true);
-			pageInfoRef.current.pageNumber = 0;
-			await fetchContacts([]);
-		})();
-	}, [props.filterUsername]);
-
-	async function fetchContacts(contacts: ContactUI[]) {
-		const [newContacts, more] = await source.getContacts(
-			pageInfoRef.current.pageNumber,
-			pageInfoRef.current.itemsCount,
-			props.filterUsername || undefined
-		);
-		console.log(newContacts);
-		setHasMore(more);
-		setContacts([...contacts, ...newContacts]);
-		pageInfoRef.current.pageNumber++;
-	}
+	const [contacts, hasMore, fetchContacts] = usePagination(
+		source.getContacts,
+		props.contacts,
+		props.filterUsername,
+		props.pageNumber,
+		props.itemsPerPage
+	);
 
 	const emptyWrapper = ({ children }: { children: ReactNode }) => (
 		<>{children}</>
@@ -96,9 +60,9 @@ export function ContactsList(props: ContactsListProps) {
 		<InfiniteScroll
 			className={props.className}
 			style={props.style}
-			loadMore={() => fetchContacts(contacts)}
+			loadMore={fetchContacts}
 			hasMore={hasMore}
-			active={empty(props.infinite) ? false : props.infinite}
+			active={unspecified(props.infinite) ? false : props.infinite}
 			loader={<ListLoader />}
 		>
 			{contacts.map((contact, idx) => (

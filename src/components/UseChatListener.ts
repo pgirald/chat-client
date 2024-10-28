@@ -9,15 +9,11 @@ import { sourceContext } from "../global/Source";
 import { range } from "../utils/objectOps";
 import { useUser } from "../global/User";
 import { useLoading } from "../global/Loading";
-import { useChats } from "../global/Chats";
+import { useChatsStore } from "../global/Chats";
 
 type _User = {
 	userID: string;
 	username: string;
-};
-
-export type ChatPageProps = {
-	onConnectionError?: (e: Error) => void;
 };
 
 type ChatsActions = "Add" | "Update";
@@ -67,12 +63,13 @@ type ActionData<T> = T extends "Add"
 // 	return next;
 // }
 
-export function ChatController(props: ChatPageProps) {
+export function useChatListener(onConnectionError?: (e: Error) => void) {
 	const [setLoading] = useLoading();
 	const [isConnected, setIsConnected] = useState<boolean>(false);
-	const [chats, setChats] = useChats();
+	const chats = useChatsStore((store) => store.requestedChats);
+	const replaceChats = useChatsStore((store) => store.replaceChats);
+	const updateChats = useChatsStore((store) => store.updateChats);
 	const chatsRef = useRef(chats);
-	const user = useUser();
 	const source = useContext(sourceContext);
 
 	useEffect(() => {
@@ -88,44 +85,14 @@ export function ChatController(props: ChatPageProps) {
 	useEffect(() => {
 		onMount();
 		return onUnmount();
-	});
+	},[]);
 
-	return (
-		<ChatSection
-			userConnected={isConnected}
-			onMessage={onMessage}
-			className="h-full w-full"
-		/>
-	);
+	return isConnected;
 
-	async function onMessage(e: ChatMessageData) {
-		let message: MessageUI = {
-			content: e.msg.content,
-			attachments: e.msg.attachments,
-			receptionTime: new Date(),
-			status: "Sending",
-			sender: user,
-			id: Date.now(),
-		};
-
-		const msgIdx = chats[e.idx].messages.push(message) - 1;
-
-		setChats([...chats]);
-
-		message = await source.sendMessage(
-			e.msg.content,
-			e.msg.attachments,
-			e.selectedChat
-		);
-
-		chats[e.idx].messages[msgIdx] = message;
-
-		setChats([...chats]);
-	}
-
+	//In the Next transition, the page will be pre-rendered with the first page of chats
 	async function fetchChats() {
 		setLoading(true);
-		setChats(await source.getAllMyChats());
+		replaceChats(await source.getAllMyChats());
 		setLoading(false);
 	}
 
@@ -137,8 +104,8 @@ export function ChatController(props: ChatPageProps) {
 
 			source.emitter.onMessageReceived.add(updateChat);
 
-			props.onConnectionError &&
-				source.emitter.onError.add(props.onConnectionError);
+			onConnectionError &&
+				source.emitter.onError.add(onConnectionError);
 		}
 
 		source.emitter.connect();
@@ -151,8 +118,8 @@ export function ChatController(props: ChatPageProps) {
 
 		source.emitter.onMessageReceived.remove(updateChat);
 
-		props.onConnectionError &&
-			source.emitter.onError.remove(props.onConnectionError);
+		onConnectionError &&
+			source.emitter.onError.remove(onConnectionError);
 
 		source.emitter.disconnect();
 	}
@@ -174,21 +141,26 @@ export function ChatController(props: ChatPageProps) {
 			},
 			[]
 		);
-		for (const _idxs of idxs) {
-			const [chatIdx, subIdx] = _idxs;
-			const subs = chatsRef.current[chatIdx].subs;
-			subs[subIdx].connected = statusData.connected;
-			chatsRef.current[chatIdx].subs = subs;
 
-			setChats([...chatsRef.current]);
+		const affected: ChatUI[] = [];
+		let chatIdx, subIdx: number;
+		let chat: ChatUI;
+
+		for (const _idxs of idxs) {
+			[chatIdx, subIdx] = _idxs;
+			chat = chatsRef.current[chatIdx];
+			chat.subs[subIdx].connected = statusData.connected;
+			affected.push(chat);
 		}
+
+		updateChats(affected);
 	}
 
 	function updateChat(message: MessageUI, chatId: number) {
-		const idx = chatsRef.current.findIndex((chat) => chat.id === chatId);
+		const chat = chatsRef.current.find((chat) => chat.id === chatId)!;
 
-		const messages = chatsRef.current[idx].messages.push(message);
+		chat.messages.push(message);
 
-		setChats([...chatsRef.current]);
+		updateChats([chat]);
 	}
 }
