@@ -115,23 +115,29 @@ export function ChatForm(props: ChatFormProps) {
 							contactInfoModalRef.current?.openModal();
 						}}
 						itemsHeight={contactsHeight}
-						contactWrapper={({ children, contact }) => (
-							<ContactWrapper
-								contact={contact}
-								onRemoveRequested={(contact) => {
-									if (contact.id === chat.owner.id) {
-										alert(language.removeOwnerWarning);
-										return;
-									}
-									setChat({
-										...chat,
-										subs: chat.subs.filter((sub) => sub.id !== contact.id),
-									});
-								}}
-							>
-								{children}
-							</ContactWrapper>
-						)}
+						contactWrapper={
+							isOwner
+								? ({ children, contact }) => (
+										<ContactWrapper
+											contact={contact}
+											onRemoveRequested={(contact) => {
+												if (contact.id === chat.owner.id) {
+													alert(language.removeOwnerWarning);
+													return;
+												}
+												setChat({
+													...chat,
+													subs: chat.subs.filter(
+														(sub) => sub.id !== contact.id
+													),
+												});
+											}}
+										>
+											{children}
+										</ContactWrapper>
+									)
+								: undefined
+						}
 					/>
 				}
 				headerRight={
