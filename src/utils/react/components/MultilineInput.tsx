@@ -26,7 +26,7 @@ export const MultilineInput = forwardRef(
 				ref={ref}
 				defaultValue={props.defaultValue}
 				value={props.value}
-				className={`${E(props.className)} focus:outline-none overflow-y-scroll`}
+				className={`${E(props.className)} -:focus:outline-none -:overflow-y-scroll`}
 				style={{
 					...props.style,
 					resize: "none",

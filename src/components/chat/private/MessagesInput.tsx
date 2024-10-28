@@ -44,6 +44,13 @@ export const MessageInput = forwardRef(
 
 		const iconsSize = props.iconsSize || 28;
 
+		useEffect(() => {
+			inputRef.current?.addEventListener("keydown", onEnterKeyPressed);
+			return () => {
+				inputRef.current?.removeEventListener("keydown", onEnterKeyPressed);
+			};
+		}, []);
+
 		useImperativeHandle(ref, () => inputRef.current as HTMLTextAreaElement);
 
 		return (
@@ -70,13 +77,7 @@ export const MessageInput = forwardRef(
 					/>
 					<MdSend
 						className="cursor-pointer mx-1 self-center"
-						onClick={() => {
-							if (!inputRef.current) {
-								return;
-							}
-							props.onSendMessage?.(inputRef.current.value || "");
-							inputRef.current.value = "";
-						}}
+						onClick={onMessageSendRequested}
 						color={theme.breaker}
 						size={iconsSize}
 					/>
@@ -110,5 +111,24 @@ export const MessageInput = forwardRef(
 				</div>
 			</div>
 		);
+
+		function onMessageSendRequested() {
+			if (!inputRef.current) {
+				return;
+			}
+			props.onSendMessage?.(inputRef.current.value || "");
+			inputRef.current.value = "";
+		}
+
+		function onEnterKeyPressed(e: KeyboardEvent) {
+			if (e.key !== "Enter" || e.shiftKey) {
+				return;
+			}
+			e.preventDefault();
+			onMessageSendRequested();
+			if (!inputRef.current) {
+				return;
+			}
+		}
 	}
 );

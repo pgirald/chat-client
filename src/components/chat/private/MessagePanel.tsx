@@ -159,7 +159,7 @@ export function MessageItem(props: MessageItemProps) {
 				/>
 				<div
 					//marginBottom: 10,
-					className="space-y-2 text-sm max-w-96 font-Roboto text-white w-fit h-fit py-1"
+					className="space-y-2 text-sm max-w-96 font-Roboto text-white w-fit h-fit py-1 whitespace-pre-line"
 					style={{ backgroundColor: msgColor }}
 				>
 					<span>{props.message.content}</span>
