@@ -1,4 +1,11 @@
-import { ForwardedRef, forwardRef, useContext, useRef, useState } from "react";
+import {
+	ForwardedRef,
+	forwardRef,
+	useContext,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 import { MessagePanel } from "./private/MessagePanel";
 import { FileData } from "./private/AttachmentsDisplay";
 import { MessageInput } from "./private/MessagesInput";
@@ -24,6 +31,7 @@ export const Chat = forwardRef(
 		const [files, setFiles] = useState<File[]>([]);
 		const modalRef = useRef<ModalHandler>(null);
 		const inputRef = useRef<HTMLTextAreaElement>(null);
+		const selectedChatRef = useRef<ChatUI>();
 		const theme = useContext(themeContext);
 		const source = useContext(sourceContext);
 		const user = useUser();
@@ -31,6 +39,10 @@ export const Chat = forwardRef(
 		const updateSelectedChat = useChatsStore(
 			(store) => store.updateSelectedChat
 		);
+
+		useEffect(() => {
+			selectedChatRef.current = selectedChat;
+		}, [selectedChat]);
 
 		return (
 			<div ref={ref} className={className}>
@@ -72,6 +84,10 @@ export const Chat = forwardRef(
 		);
 
 		async function onMessage(md: MessageData) {
+			if (!selectedChatRef.current) {
+				return;
+			}
+
 			let message: MessageUI = {
 				content: md.content,
 				attachments: md.attachments,
@@ -81,15 +97,19 @@ export const Chat = forwardRef(
 				id: Date.now(),
 			};
 
-			const msgIdx = selectedChat!.messages.push(message) - 1;
+			const msgIdx = selectedChatRef.current.messages.push(message) - 1;
 
-			updateSelectedChat(selectedChat!);
+			updateSelectedChat(selectedChatRef.current);
 
-			message = await source.sendMessage(md.content, md.attachments, selectedChat!);
+			message = await source.sendMessage(
+				md.content,
+				md.attachments,
+				selectedChatRef.current
+			);
 
-			selectedChat!.messages[msgIdx] = message;
+			selectedChatRef.current.messages[msgIdx] = message;
 
-			updateSelectedChat(selectedChat!);
+			updateSelectedChat(selectedChatRef.current);
 		}
 	}
 );
