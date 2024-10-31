@@ -48,10 +48,16 @@ export function AppInput(props: AppInputProps) {
 					props.onChange?.(e.target.value);
 				}}
 				onFocus={() => {
+					if (!props.active) {
+						return;
+					}
 					setEditingContent(true);
 					props.onFocus?.();
 				}}
 				onBlur={() => {
+					if (!props.active) {
+						return;
+					}
 					setEditingContent(false);
 					props.onBlur?.();
 				}}
