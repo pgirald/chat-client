@@ -1,4 +1,4 @@
-import { ReactNode, useContext } from "react";
+import { ReactNode, useContext, useRef } from "react";
 import { IconType } from "react-icons";
 import { BsFillQuestionCircleFill } from "react-icons/bs";
 import { languageContext } from "../../global/Language";
@@ -14,17 +14,18 @@ import { Info } from "../app_style/Info";
 export function SettingsForm() {
 	const language = useContext(languageContext);
 	const theme = useContext(themeContext);
+	const defaultSettingsRef = useRef<SettingsUI>({
+		chatApproval: true,
+		discoverability: true,
+		enableNotifications: true,
+		seenStatus: true,
+		showOnlineStatus: true,
+		notificationTone: { id: 0, name: "Some notification tone", url: "" },
+		groupsTone: { id: 0, name: "Some groups tone", url: "" },
+	});
 
 	const [settings, setSettings, discard, newChanges] =
-		useGuardChanges<SettingsUI>({
-			chatApproval: true,
-			discoverability: true,
-			enableNotifications: true,
-			seenStatus: true,
-			showOnlineStatus: true,
-			notificationTone: { id: 0, name: "Some notification tone", url: "" },
-			groupsTone: { id: 0, name: "Some groups tone", url: "" },
-		});
+		useGuardChanges<SettingsUI>(defaultSettingsRef.current);
 
 	return (
 		<WindowTemplate header={language.settings} wrapperClassName="space-y-5">
