@@ -97,22 +97,22 @@ export function ChatSection(props: ChatSectionProps) {
 				</div>
 				<div className="h-full w-[70%]">
 					<div
-						className="w-full flex-row justify-start items-center space-x-2 h-1/5"
+						onClick={
+							selectedChat
+								? () => {
+										chatModalRef.current?.openModal();
+									}
+								: undefined
+						}
+						className="w-full flex-row justify-start items-center space-x-2 h-1/5 cursor-pointer"
 						style={{ color: theme.content, backgroundColor: theme.bg }}
 					>
 						{selectedChat && (
 							<>
 								<EditableImg src={chatImg(selectedChat, user)} size={70} />
 								<Label content={chatLabel(selectedChat, user, language)} />
-								<div className="flex-row w-full h-fit justify-end">
+								<div className="flex-row w-full h-fit justify-end pr-2">
 									<IoSearchSharp className="cursor-pointer" size={iconsSize} />
-									<HiOutlineDotsVertical
-										className="cursor-pointer"
-										onClick={() => {
-											chatModalRef.current?.openModal();
-										}}
-										size={iconsSize}
-									/>
 								</div>
 							</>
 						)}
