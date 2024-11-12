@@ -1,6 +1,6 @@
 import { Emitter, Source } from "../../Chore/Source";
 import * as fs from "fs";
-import { EventHandler, sleep } from "../../utils/General";
+import { EventHandler, sleep, unspecified } from "../../utils/General";
 import {
 	ChatUI,
 	ContactUI,
@@ -13,7 +13,7 @@ import { FindBy } from "@testing-library/react";
 import { fromJSON } from "flatted";
 import rawViews from "../fakeViews.json";
 import { json } from "stream/consumers";
-import { InvalidParamsError } from "../../utils/objectOps";
+import { getPage, InvalidParamsError } from "../../utils/objectOps";
 import { chatLabel } from "../../Chore/view";
 import { globalContext } from "./Context";
 
@@ -43,7 +43,7 @@ function getFakeViews(): FViews {
 }
 
 //Milliseconds
-const sleepTime = 1500;
+const sleepTime = 500;
 
 export type MockSource = Source & {
 	_authenticate: (email: string, password: string) => void;
@@ -78,34 +78,54 @@ export function MockServer(): Source {
 			await sleep(sleepTime);
 			this._authenticate(email, password);
 		},
-		async getMyChats(page, count, chatName?) {
+		async getMyChats(page, count, chatName?, msgsCount = 10) {
 			await sleep(sleepTime);
-			if (page < 0) {
-				throw new InvalidParamsError("'page' parameter has an invalid value");
-			}
-			const start = page * count;
-			const end = start + count;
 			const filtered = chats.filter((chat) =>
 				chatLabel(chat, globalContext.user, globalContext.language)
 					.toLowerCase()
 					.includes(chatName?.toLowerCase() || "")
 			);
-			const dataPage = deepCopy(filtered.slice(start, end));
 
-			return [dataPage, filtered.at(end) !== undefined];
+			let [dataPage, hasMore] = getPage(filtered, page, count);
+
+			dataPage = deepCopy(dataPage);
+
+			for (const chat of dataPage) {
+				chat.messages = chat.messages.slice(-msgsCount);
+			}
+
+			return [dataPage, hasMore];
+		},
+		async getMyMessages(chat, page, count, messageContent?) {
+			await sleep(sleepTime);
+
+			const _chat = chats.find((_chat) => _chat.id === chat.id);
+
+			if (!_chat) {
+				throw new Error("The specified chat was not found");
+			}
+
+			const filtered = _chat.messages.filter(
+				(message) =>
+					message.content
+						.toLowerCase()
+						.includes(messageContent?.toLowerCase() || "") ||
+					message.attachments.some((att) =>
+						att.name.toLowerCase().includes(messageContent?.toLowerCase() || "")
+					)
+			);
+
+			const [dataPage, hasMore] = getPage(filtered, page, count);
+
+			return [deepCopy(dataPage), hasMore];
 		},
 		async getContacts(page, count, username?) {
 			await sleep(sleepTime);
-			if (page < 0) {
-				throw new InvalidParamsError("'page' parameter has an invalid value");
-			}
-			const start = page * count;
-			const end = start + count;
 			const filtered = contacts.filter((contact) =>
 				contact.username.toLowerCase().includes(username?.toLowerCase() || "")
 			);
-			const dataPage = deepCopy(filtered.slice(start, end));
-			return [dataPage, filtered.at(end) !== undefined];
+			const [dataPage, hasMore] = getPage(filtered, page, count);
+			return [deepCopy(dataPage), hasMore];
 		},
 		async getMyConfig(canceler?): Promise<SettingsUI | undefined> {
 			await sleep(sleepTime, canceler);
@@ -114,10 +134,10 @@ export function MockServer(): Source {
 			}
 			return settings && deepCopy(settings);
 		},
-		async getAllMyChats() {
-			await sleep(sleepTime);
-			return deepCopy(chats);
-		},
+		// async getAllMyChats() {
+		// 	await sleep(sleepTime);
+		// 	return deepCopy(chats);
+		// },
 		async sendMessage(content, attachments, chat) {
 			await sleep(sleepTime);
 			const _chat = chats.find((_chat) => _chat.id === chat.id);

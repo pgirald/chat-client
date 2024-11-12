@@ -52,6 +52,7 @@ export function ChatSection(props: ChatSectionProps) {
 	const theme = useContext(themeContext);
 	const toolsHeight = 40;
 	const iconsSize = 20;
+	const messagesPerPage = 10;
 
 	return (
 		<div
@@ -91,6 +92,7 @@ export function ChatSection(props: ChatSectionProps) {
 						}}
 						selected={selectedChat?.id}
 						infinite={true}
+						messagesPerPage={messagesPerPage}
 					/>
 				</div>
 				<div className="h-full w-[70%]">
@@ -115,7 +117,11 @@ export function ChatSection(props: ChatSectionProps) {
 							</>
 						)}
 					</div>
-					<Chat className="h-5/6 w-full" />
+					<Chat
+						className="h-5/6 w-full"
+						messagesPerPage={messagesPerPage}
+						messagesPageNumber={-2}
+					/>
 				</div>
 			</div>
 			<Modal ref={newChatModalRef}>

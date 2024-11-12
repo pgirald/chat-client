@@ -16,6 +16,7 @@ import { ChatUI, MessageUI } from "../../Chore/Types";
 import { useUser } from "../../global/User";
 import { useChatsStore } from "../../global/Chats";
 import { sourceContext } from "../../global/Source";
+import { PiDropSimple } from "react-icons/pi";
 
 export type MessageData = {
 	content: string;
@@ -24,14 +25,21 @@ export type MessageData = {
 
 export type ChatProps = {
 	className?: string;
+	messagesPerPage?: number;
+	messagesPageNumber?: number;
 };
 
 export const Chat = forwardRef(
-	({ className }: ChatProps, ref?: ForwardedRef<HTMLDivElement>) => {
+	(
+		{ className, messagesPerPage, messagesPageNumber }: ChatProps,
+		ref?: ForwardedRef<HTMLDivElement>
+	) => {
 		const [files, setFiles] = useState<File[]>([]);
 		const modalRef = useRef<ModalHandler>(null);
 		const inputRef = useRef<HTMLTextAreaElement>(null);
 		const selectedChatRef = useRef<ChatUI>();
+		const firstMessageReachedRef = useRef(false);
+
 		const theme = useContext(themeContext);
 		const source = useContext(sourceContext);
 		const user = useUser();
@@ -39,6 +47,10 @@ export const Chat = forwardRef(
 		const updateSelectedChat = useChatsStore(
 			(store) => store.updateSelectedChat
 		);
+
+		useEffect(() => {
+			firstMessageReachedRef.current = false;
+		}, [selectedChat?.id]);
 
 		useEffect(() => {
 			selectedChatRef.current = selectedChat;
@@ -49,7 +61,11 @@ export const Chat = forwardRef(
 				<MessagePanel
 					className="h-4/5 border w-full rounded-l-lg"
 					style={{ borderColor: theme.separator }}
-					messages={selectedChat?.messages || []}
+					itemsPerPage={messagesPerPage}
+					pageNumber={messagesPageNumber}
+					onFirstMessageReached={() => {
+						firstMessageReachedRef.current = true;
+					}}
 				/>
 				<div className="h-1/5 w-full items-center justify-center">
 					{selectedChat && (
@@ -57,7 +73,7 @@ export const Chat = forwardRef(
 							className="w-2/3 h-2/3"
 							ref={inputRef}
 							onSendMessage={(content) =>
-								onMessage({ content, attachments: [] })
+								onMessageSend({ content, attachments: [] })
 							}
 							onFilesSelected={(files) => {
 								setFiles(files);
@@ -74,7 +90,7 @@ export const Chat = forwardRef(
 							if (inputRef.current) {
 								inputRef.current.value = "";
 							}
-							onMessage(msgData);
+							onMessageSend(msgData);
 							modalRef.current?.closeModal();
 						}}
 						files={files}
@@ -83,7 +99,7 @@ export const Chat = forwardRef(
 			</div>
 		);
 
-		async function onMessage(md: MessageData) {
+		async function onMessageSend(md: MessageData) {
 			if (!selectedChatRef.current) {
 				return;
 			}
@@ -97,7 +113,13 @@ export const Chat = forwardRef(
 				id: Date.now(),
 			};
 
+			if (!firstMessageReachedRef.current) {
+				selectedChatRef.current.messages.shift();
+			}
+
 			const msgIdx = selectedChatRef.current.messages.push(message) - 1;
+
+			selectedChatRef.current.messages = [...selectedChatRef.current.messages];
 
 			updateSelectedChat(selectedChatRef.current);
 

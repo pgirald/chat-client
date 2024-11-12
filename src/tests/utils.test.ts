@@ -1,4 +1,9 @@
-import { InvalidParamsError, range, typedKeys } from "../utils/objectOps";
+import {
+	getPage,
+	InvalidParamsError,
+	range,
+	typedKeys,
+} from "../utils/objectOps";
 
 const obj: { one: string; two: string; three: number } = Object.create({
 	protoProp: "moli",
@@ -41,3 +46,38 @@ test.each<{
 		expect(() => range(start, end)).toThrow((expected as any).constructor);
 	}
 });
+
+test.each`
+	arr                                                    | page        | count        | expectedResult              | shouldThrow
+	${[]}                                                  | ${0}        | ${2}         | ${[[], false]}              | ${false}
+	${[]}                                                  | ${-1}       | ${1}         | ${[[], false]}              | ${false}
+	${[1, 2, 3, 4, 5]}                                     | ${0}        | ${2}         | ${[[1, 2], true]}           | ${false}
+	${[1, 2, 3, 4, 5]}                                     | ${-1}       | ${2}         | ${[[4, 5], true]}           | ${false}
+	${[1, 2, 3, 4, 5]}                                     | ${1}        | ${2}         | ${[[3, 4], true]}           | ${false}
+	${[1, 2, 3, 4, 5]}                                     | ${2}        | ${2}         | ${[[5], false]}             | ${false}
+	${[1, 2, 3, 4, 5]}                                     | ${0}        | ${0}         | ${[[], true]}               | ${false}
+	${[]}                                                  | ${0}        | ${0}         | ${[[], false]}              | ${false}
+	${[]}                                                  | ${-5}       | ${4}         | ${[[], false]}              | ${false}
+	${[1, 2, 3]}                                           | ${-2}       | ${2}         | ${[[1], false]}             | ${false}
+	${[1, 2, 3, 4, 5]}                                     | ${-2}       | ${3}         | ${[[1, 2], false]}          | ${false}
+	${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]} | ${-3}       | ${3}         | ${[[7, 8, 9], true]}        | ${false}
+	${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]} | ${-3}       | ${5}         | ${[[1, 2, 3, 4, 5], false]} | ${false}
+	${[1, 2, 3, 4, 5, 6]}                                  | ${-3}       | ${2}         | ${[[1, 2], false]}          | ${false}
+	${[1, 2, 3]}                                           | ${-1}       | ${0}         | ${[[], true]}               | ${false}
+	${[1, 2, 3, 4, 5]}                                     | ${0}        | ${-1}        | ${null}                     | ${true}
+	${[1, 2, 3, 4, 5]}                                     | ${1}        | ${NaN}       | ${null}                     | ${true}
+	${[1, 2, 3, 4, 5]}                                     | ${NaN}      | ${1}         | ${null}                     | ${true}
+	${[1, 2, 3, 4, 5]}                                     | ${0}        | ${Infinity}  | ${null}                     | ${true}
+	${[1, 2, 3, 4, 5]}                                     | ${Infinity} | ${1}         | ${null}                     | ${true}
+	${[1, 2, 3, 4, 5]}                                     | ${2.5}      | ${2}         | ${null}                     | ${true}
+	${[1, 2, 3, 4, 5]}                                     | ${0}        | ${-Infinity} | ${null}                     | ${true}
+`(
+	"returns $expectedResult when called with arr=$arr, page=$page, count=$count",
+	({ arr, page, count, expectedResult, shouldThrow }) => {
+		if (shouldThrow) {
+			expect(() => getPage(arr, page, count)).toThrow();
+		} else {
+			expect(getPage(arr, page, count)).toEqual(expectedResult);
+		}
+	}
+);

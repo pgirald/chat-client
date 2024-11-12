@@ -9,7 +9,6 @@ export default meta;
 
 export const ShowingMessages: StoryObj<typeof MessagePanel> = {
 	args: {
-		messages: globalContext.chats[0].messages,
 		className: "border-black w-full h-[100vh]",
 	},
 };

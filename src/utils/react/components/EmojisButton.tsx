@@ -73,8 +73,6 @@ export function EmojisButton(props: EmojisButtonProps) {
 		let top = window.innerHeight - bottom - componentRect.height;
 		let right = window.innerWidth - left - componentRect.width;
 
-		console.log(`t:${top} r:${right} b:${bottom} l:${left}`);
-
 		if (top < 0) {
 			bottom = window.innerHeight - componentRect.height; // Reposition to the top of the screen
 		}

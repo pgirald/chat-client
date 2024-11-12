@@ -10,12 +10,18 @@ import { EventHandler } from "../utils/Types";
 
 export type Source = {
 	authenticate: (email: string, password: string) => Promise<void>;
-	getAllMyChats: () => Promise<ChatUI[]>;
 	getMyChats: (
 		page: number,
 		count: number,
-		chatName?: string
+		chatName?: string,
+		msgsCount?: number
 	) => Promise<[ChatUI[], boolean]>;
+	getMyMessages: (
+		chat: ChatUI,
+		page: number,
+		count: number,
+		messageContent?: string
+	) => Promise<[MessageUI[], boolean]>;
 	getContacts: (
 		page: number,
 		count: number,

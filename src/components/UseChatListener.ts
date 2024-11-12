@@ -9,18 +9,18 @@ import { range } from "../utils/objectOps";
 import { useLoading } from "../global/Loading";
 import { useChatsStore } from "../global/Chats";
 
-type _User = {
-	userID: string;
-	username: string;
-};
+// type _User = {
+// 	userID: string;
+// 	username: string;
+// };
 
-type ChatsActions = "Add" | "Update";
+// type ChatsActions = "Add" | "Update";
 
-type ActionData<T> = T extends "Add"
-	? Indexed<ChatUI>
-	: T extends "Update"
-		? Indexed<Optional<ChatUI>>
-		: unknown;
+// type ActionData<T> = T extends "Add"
+// 	? Indexed<ChatUI>
+// 	: T extends "Update"
+// 		? Indexed<Optional<ChatUI>>
+// 		: unknown;
 
 // function chatsReducer(
 // 	state: readonly ChatUI[],
@@ -75,24 +75,11 @@ export function useChatListener(onConnectionError?: (e: Error) => void) {
 	}, [chats]);
 
 	useEffect(() => {
-		(async () => {
-			await fetchChats();
-		})();
-	}, []);
-
-	useEffect(() => {
 		onMount();
 		return onUnmount();
 	},[]);
 
 	return isConnected;
-
-	//In the Next transition, the page will be pre-rendered with the first page of chats
-	async function fetchChats() {
-		setLoading(true);
-		replaceChats(await source.getAllMyChats());
-		setLoading(false);
-	}
 
 	function onMount() {
 		{

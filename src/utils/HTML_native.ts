@@ -18,7 +18,7 @@ export function setNativeValue(
 
 export function scrollToBottom(elm: HTMLElement | null) {
 	if (elm) {
-		elm.scrollTop = elm.scrollHeight;
+		elm.scrollTo(0, elm.scrollHeight);
 	}
 }
 
@@ -26,4 +26,8 @@ export function scrolledToBottom(elm: HTMLElement) {
 	//return elm.scrollTop === elm.scrollHeight - elm.offsetHeight;
 	return Math.abs(elm.scrollHeight - (elm.scrollTop + elm.offsetHeight)) <= 1;
 	//return div.scrollTop + div.clientHeight === div.scrollHeight;
+}
+
+export function scrolledToTop(elm: HTMLElement) {
+	return elm.scrollTop === 0;
 }

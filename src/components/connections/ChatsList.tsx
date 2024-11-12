@@ -11,6 +11,7 @@ import { sourceContext } from "../../global/Source";
 import { usePagination } from "../../utils/react/hooks/UsePagination";
 import { ListLoader } from "../app_style/ListLoader";
 import { unspecified } from "../../utils/General";
+import { useChatsStore } from "../../global/Chats";
 
 export type ChatsListProps = {
 	className?: string;
@@ -18,6 +19,7 @@ export type ChatsListProps = {
 	filterChatName?: string;
 	pageNumber?: number;
 	itemsPerPage?: number;
+	messagesPerPage?: number;
 	infinite?: boolean;
 	onChatSelected?: (chat: ChatUI, idx: number) => void;
 	style?: CSSProperties;
@@ -30,12 +32,26 @@ export const ChatsList = forwardRef<HTMLDivElement, ChatsListProps>(
 		const language = useContext(languageContext);
 		const source = useContext(sourceContext);
 
-		const [chats, hasMore, fetchChats] = usePagination(
-			source.getMyChats,
+		const replaceChats = useChatsStore((store) => store.replaceChats);
+		const chats = useChatsStore((store) => store.requestedChats);
+
+		const [_, hasMore, fetchChats] = usePagination(
+			async function (page, count, chatName): Promise<[ChatUI[], boolean]> {
+				return await source.getMyChats(
+					page,
+					count,
+					chatName,
+					props.messagesPerPage
+				);
+			},
 			props.chats,
 			props.filterChatName,
 			props.pageNumber,
-			props.itemsPerPage
+			props.itemsPerPage,
+			false,
+			(chats) => {
+				replaceChats(chats);
+			}
 		);
 
 		return (

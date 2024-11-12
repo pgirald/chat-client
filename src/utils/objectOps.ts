@@ -33,11 +33,52 @@ export function range(start: number, end: number): number[] {
 	return arr;
 }
 
+export function getPage<T>(
+	arr: T[],
+	page: number,
+	count: number
+): [T[], boolean] {
+	if (!Number.isInteger(page) || !Number.isInteger(count)) {
+		throw new Error(
+			`Both the ${nameOf({ page })} and ${nameOf({ count })} parameters must be integers`
+		);
+	}
+	if (count < 0) {
+		throw new Error(
+			`The ${nameOf({ count })} parameter must be a non-negative integer`
+		);
+	}
+	if (page === -1 && count > 0) {
+		return [arr.slice(-count), arr.at(-count - 1) !== undefined];
+	}
+	let hasMore: boolean;
+	const start = page * count;
+	const end = start + count;
+	if (page < 0) {
+		hasMore = arr.at(start - 1) !== undefined;
+	} else {
+		hasMore = arr.at(end) !== undefined;
+	}
+	return [arr.slice(start, end), hasMore];
+}
+
 export function isEmpty(o?: object) {
 	if (!o) {
 		return true;
 	}
 	return Object.keys(o).length === 0;
+}
+
+type SinglePropertyObject<T> = {
+	[K in keyof T]: T[K];
+} & {
+	[K in keyof T]: unknown;
+} extends T
+	? T
+	: never;
+
+export function nameOf<T extends object>(o: SinglePropertyObject<T>) {
+	return Object.keys(o)[0];
 }
 
 export function typedKeys<T extends object>(obj: T): (keyof T)[] {
